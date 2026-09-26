@@ -18,6 +18,15 @@ add_action('rest_api_init', function () {
             return rest_ensure_response(array('plugin' => 'inkora-core', 'version' => '0.1.0', 'woocommerce' => class_exists('WooCommerce')));
         },
     ));
+    register_rest_route('inkora/v1', '/seed', array(
+        'methods' => 'POST',
+        'permission_callback' => '__return_true',
+        'callback' => function () {
+            $result = inkora_seed_test_product();
+            if (is_wp_error($result)) return $result;
+            return rest_ensure_response(array('product_id' => (int) $result, 'slug' => 'inkora-phase-01-test'));
+        },
+    ));
 });
 
 /** Explicit local-only, repeatable seed; never runs on activation. */
@@ -33,6 +42,13 @@ function inkora_seed_test_product() {
     }
     $existing = wc_get_product_id_by_sku('INKORA-PHASE-01');
     if ($existing) {
+        $product = wc_get_product($existing);
+        $product->set_name('محصول آزمایشی اتصال اینکورا');
+        $product->set_slug('inkora-phase-01-test');
+        $product->set_status('publish');
+        $product->set_regular_price('1250000');
+        $product->set_stock_status('outofstock');
+        $product->save();
         return $existing;
     }
     $product = new WC_Product_Simple();

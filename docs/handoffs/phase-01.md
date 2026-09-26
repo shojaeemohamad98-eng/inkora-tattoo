@@ -1,10 +1,10 @@
-# تحویل اجرایی فاز ۱ — در انتظار تکمیل Local
+# تحویل اجرایی فاز ۱ — کامل
 
 تاریخ 2026-09-26. چت مدیریت: `01a0defa-f975-7c32-addc-760b1fd52ddf`.
 
 اتوماسیون پیگیری: **Inkora phase handoff monitor** فعال است. پایش روزانه است و شرط شروع فاز بعدی، تکمیل واقعی فاز و تأیید صریح است؛ برای وضعیت‌های بدون تغییر اعلان نمی‌دهد.
 
-**این گزارش پایان موفق فاز نیست.** ساخت سایت جدید Local اکنون تأیید شده، اما نصب WooCommerce، فعال‌سازی افزونه و آزمون محصول واقعی هنوز باقی‌اند. وارد فاز ۲ نشوید.
+**فاز ۱ با موفقیت تکمیل شد.** سایت جدید Local، WooCommerce، افزونه و مسیر API تا نمایش در frontend آزمون شدند. فاز ۲ فقط پس از تأیید مدیر پروژه شروع شود.
 
 ## ساخته‌شده
 
@@ -22,28 +22,21 @@ runtime، .env، node_modules، خروجی build، cache و لاگ‌ها در G
 - `pnpm build`: موفق با adapter-node؛ پیام‌های زمان‌بندی افزونه‌ها صرفاً اطلاع‌رسانی بودند.
 - `node --test tests/*.test.mjs`: چهار آزمون موفق: ریال، minor unit، تومان بدون تقسیم دوباره، رد ارز/قیمت نامعتبر.
 - `php -n -l wordpress/plugins/inkora-core/inkora-core.php`: موفق. این فقط نحو PHP است و اثبات اجرای افزونه در WordPress نیست.
-- frontend در `http://127.0.0.1:5173/` اجرا شد. HTTP 200، lang=fa و dir=rtl بررسی شدند؛ متن عدم اتصال موجود و متن موفقیت غایب بود. مرورگر داخلی همین وضعیت را نمایش داد.
-- تا این تحویل WordPress/API واقعی آزمایش موفق نداشته‌اند. `verify:live` برای ادامه آماده است؛ نباید با داده ساختگی پاس شود.
+- frontend در `http://127.0.0.1:5173/` با HTTP 200، lang=fa و dir=rtl اجرا شد و نتیجه موفق اتصال را نمایش داد.
+- WordPress `inkora.test.local` با WooCommerce 11.1.2 فعال بررسی شد؛ تنظیمات ایران/تهران، IRR و صفر رقم اعشار تأیید شد.
+- Inkora Core نسخه 0.1.0 فعال شد و health endpoint پاسخ `woocommerce: true` داد.
+- محصول واقعی WooCommerce با شناسه 13، SKU `INKORA-PHASE-01`، slug `inkora-phase-01-test` و قیمت 1,250,000 ریال/125,000 تومان منتشر و خارج از موجودی شد.
+- Store API، frontend در `http://127.0.0.1:5173/` و `pnpm verify:live` موفق شدند؛ frontend همان محصول و شناسه 13 را نمایش داد.
 
-## مانع و مسیر ادامه
+## محدودیت‌های باقی‌مانده برای فازهای بعد
 
-ابزار مرورگر کنترل بومی Windows نداشت. مهارت computer-use و @oai/sky جداگانه بررسی شدند؛ پنجره Local با عنوان Choose site path پیدا شد. پوشه خالی `runtime\wordpress` ساخته و مقدار کادر Folder روی مسیر کامل آن تنظیم شد. کلیک Select Folder با `coordinate input geometry is unavailable` شکست خورد؛ بازیابی capture نیز `FrameArrived timed out: timed out waiting on channel` داد. انتخاب نهایی پوشه/ساخت سایت تأیید نشده است. ابزار امنیت Windows دستکاری نشد.
-
-اقدام ساده بعدی اکنون: در پنل سایت جدید `http://inkora.test.local/wp-admin/` افزونه WooCommerce را نصب و فعال کنید؛ جدول افزونه‌ها در بررسی اخیر خالی بود. رمز در چت ارسال نشود.
-
-پس از پاسخ «ساخته شد»، عامل اجرایی ابتدا ثبت سایت و مسیر واقعی را دوباره بررسی کند؛ سایت تکراری نسازد. سپس فقط در سایت جدید:
-
-1. WooCommerce رسمی را نصب و فعال کند؛ IRR، کشور ایران و عدم مخفی‌کردن محصول ناموجود را تنظیم کند.
-2. scripts/sync-plugin.ps1 را اجرا و inkora-core را فعال کند.
-3. محیط WP_ENVIRONMENT_TYPE=local را بررسی کند. محصول با ابزار افزونه ساخته شود؛ قیمت ۱٬۲۵۰٬۰۰۰ ریال، نامک inkora-phase-01-test و SKU INKORA-PHASE-01.
-4. سلامت افزونه و Store API را بخواند؛ صفحه frontend را باز و تطابق id/نام/۱۲۵٬۰۰۰ تومان را اثبات کند. `pnpm verify:live` همین زنجیره واقعی را بررسی می‌کند.
-5. نتیجه واقعی، نسخه WordPress/WooCommerce و شناسه محصول را در این گزارش ثبت کند؛ فقط پس از تکمیل همه شروط وضعیت فاز را کامل کند.
+در فاز ۱ درگاه پرداخت، خرید واقعی، ACF و انتشار عمومی انجام نشده‌اند؛ این موارد برای فاز ۴ هستند. رمز یا کلید API در چت ثبت نشده است.
 
 ## مسیرهای مهم
 
 - ریشه: `C:\Users\moham\Local Sites\inkora tattoo`
 - سایت جدید موردنظر: `runtime\wordpress`؛ public موردنظر: `runtime\wordpress\app\public`
-- دامنه پیشنهادی: `http://inkora-tattoo.local`
+- دامنه واقعی: `http://inkora.test.local`
 - frontend: `http://127.0.0.1:5173/`؛ دستور راه‌اندازی: `powershell -ExecutionPolicy Bypass -File .\scripts\pnpm.ps1 dev`
 - تنظیم private: `apps/storefront/.env` (از .env.example ساخته شده؛ در Git نیست)
 - گزارش‌های مشترک: `docs/architecture.md`، `docs/status.md`، همین فایل؛ راهنمای مبتدی: `docs/local-development.md`.

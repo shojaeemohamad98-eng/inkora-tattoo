@@ -1,0 +1,45 @@
+# معماری مصوب Inkora
+
+تاریخ: 2026-09-26. محدوده فاز ۱ فقط زیرساخت محلی و آزمون اتصال محصول است.
+
+## مسیرها و مرزها
+
+ریشه منبع: `C:\Users\moham\Local Sites\inkora tattoo`.
+
+- `apps/storefront`: SvelteKit، TypeScript، Tailwind و Bits UI. فعلاً یک صفحه آزمون RTL فارسی؛ طراحی صفحه اصلی در فاز ۳.
+- `wordpress/plugins/inkora-core`: منبع افزونه اختصاصی. هسته WordPress و WooCommerce دست‌نخورده می‌مانند.
+- `runtime/wordpress`: مسیر صریح سایت جدید LocalWP با نام Inkora Tattoo و دامنه پیشنهادی inkora-tattoo.local. کل این پوشه از Git خارج است: هسته، uploads، تنظیمات، دیتابیس و لاگ‌ها.
+- `docs` و `scripts`: مستندات مشترک و ابزارهای موردنیاز فعلی.
+
+پوشه packages، Docker، Redis، UI library اختصاصی و اسکلت فازهای آینده تا نیاز واقعی ایجاد نمی‌شوند. API client مرکزی فعلاً در `apps/storefront/src/lib/server/commerce.ts` است و در صورت داشتن مصرف‌کننده دوم قابل استخراج است.
+
+## جریان داده
+
+مرورگر ← بارگذاری سروری SvelteKit ← WooCommerce Store API ← محصول منتشرشده در دیتابیس WordPress.
+
+کلاینت مرکزی زمان انتظار محدود، بررسی HTTP و قرارداد پاسخ دارد. داده جعلی جایگزین خطا نمی‌شود. آدرس WordPress در متغیر خصوصی WORDPRESS_URL است. Store API محصول عمومی به کلید نیاز ندارد؛ کلیدهای مدیریتی، پرداخت و AI در آینده فقط سمت سرور نگهداری می‌شوند.
+
+inkora-core یک endpoint عمومی کم‌اطلاعات `/wp-json/inkora/v1/health` دارد. ابزار ساخت محصول فقط در محیط local و برای مدیر دارای manage_woocommerce با nonce قابل استفاده است؛ روی فعال‌سازی خودکار داده نمی‌سازد. محصول آزمایشی ناموجود است تا قابل خرید نباشد. گزینه مخفی‌کردن محصولات ناموجود باید برای این آزمون خاموش باشد.
+
+## محتوا و پول
+
+برای فاز ۱، فیلدهای استاندارد WooCommerce کافی‌اند؛ ACF نصب نمی‌شود. مدل‌های پیشرفته دستگاه، سوزن، رنگ و هنرمند در فاز مربوط بررسی می‌شوند و انتخاب ACF براساس نیاز واقعی و هزینه انجام خواهد شد.
+
+مبنای آزمون IRR در WooCommerce و نمایش تومان در رابط است. قیمت Store API ابتدا با currency_minor_unit تفسیر و سپس ریال بر ۱۰ تقسیم می‌شود. IRT دوباره تقسیم نمی‌شود؛ ارز ناشناخته خطاست. این آزمون واحد جای آزمون واقعی درگاه را نمی‌گیرد. در ابتدای مسیر فروشگاه فاز ۴ سازگاری درگاه ایرانی با headless بررسی و تبدیل ریال/تومان، callback، امضا و خرید کامل آزمایش می‌شود. درگاه هنوز انتخاب نشده است.
+
+## میزبانی
+
+فعلاً Git محلی؛ بدون GitHub، CI آنلاین یا deployment. Vercel فقط نامزد میزبانی frontend است؛ WordPress به سرور جدا نیاز دارد. پیش‌نمایش آنلاین به backend محلی دسترسی مستقیم ندارد. حساب، دسترسی و هزینه قبل از انتخاب بررسی می‌شوند. adapter-node فعلی برای اجرای قابل‌آزمایش محلی است و انتخاب قطعی میزبان نیست.
+
+## منابع و تقدم تصمیم‌ها
+
+مرجع تصویری فاز ۲: `C:\Users\moham\OneDrive\Desktop\b8c9fc82-a927-4897-9890-57d40de0f069.jpg`؛ لوگو و عکس‌های کاربر در همان فاز بررسی می‌شوند.
+
+سند اولیه خوانده شد: `C:\Users\moham\.codex\attachments\62ea0f59-8853-4ebc-8d37-06e973a62dcf\Pasted text.txt`. دستورهای Docker/Mac، استقرار قطعی Vercel و الزام GitHub آن با تصمیم‌های جدید جایگزین شده‌اند.
+
+مراجع فنی بررسی‌شده:
+- https://svelte.dev/docs/cli/sv-create
+- https://tailwindcss.com/docs/installation/framework-guides/sveltekit
+- https://bits-ui.com/docs/components/accordion
+- https://developer.woocommerce.com/docs/apis/store-api/resources-endpoints/products
+- https://localwp.com/help-docs/advanced/change-the-location-of-a-sites-folder/

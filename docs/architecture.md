@@ -6,7 +6,7 @@
 
 ریشه منبع: `C:\Users\moham\Local Sites\inkora tattoo`.
 
-- `apps/storefront`: SvelteKit، TypeScript، Tailwind و Bits UI. صفحهٔ اصلی نمایشی در `/`؛ آزمون واقعی محصول با server load مستقل در `/integration-check`؛ دفتر طراحی فاز ۲ بدون تغییر در `/design-system`.
+- `apps/storefront`: SvelteKit، TypeScript، Tailwind و Bits UI. صفحهٔ اصلی در `/`؛ آزمون واقعی محصول با server load مستقل در `/integration-check`؛ ابزارهای داده‌محور در `/advisor` و `/compare`؛ شبیه‌ساز client-only در `/simulator`؛ دفتر طراحی در `/design-system`.
 - `wordpress/plugins/inkora-core`: منبع افزونه اختصاصی. هسته WordPress و WooCommerce دست‌نخورده می‌مانند.
 - `runtime/wordpress`: مسیر صریح سایت جدید LocalWP با نام Inkora Tattoo و دامنه پیشنهادی inkora-tattoo.local. کل این پوشه از Git خارج است: هسته، uploads، تنظیمات، دیتابیس و لاگ‌ها.
 - `docs` و `scripts`: مستندات مشترک و ابزارهای موردنیاز فعلی.
@@ -20,6 +20,8 @@ Home فقط دادهٔ نمایشی typeدار محلی در `src/lib/components
 مرورگر ← بارگذاری سروری SvelteKit ← WooCommerce Store API ← محصول منتشرشده در دیتابیس WordPress.
 
 کلاینت مرکزی زمان انتظار محدود، بررسی HTTP و قرارداد پاسخ دارد. داده جعلی جایگزین خطا نمی‌شود. آدرس WordPress در متغیر خصوصی WORDPRESS_URL است. Store API محصول عمومی به کلید نیاز ندارد؛ کلیدهای مدیریتی، پرداخت و AI در آینده فقط سمت سرور نگهداری می‌شوند.
+
+فاز ۵ قرارداد `SmartMetadata` را در `src/lib/smart-shopping.ts` و parsing آن را در client مرکزی `src/lib/server/commerce.ts` نگه می‌دارد. افزونه فقط metadata اعتبارسنجی‌شدهٔ کالاهای منتشرشده و موجود را در namespace `extensions.inkora_smart` Store API می‌گذارد. frontend مستقیماً endpoint یا WordPress را صدا نمی‌زند. شبیه‌ساز هیچ API ندارد و `URL.createObjectURL` مرورگر را برای پیش‌نمایش فایل محلی به کار می‌برد.
 
 inkora-core یک endpoint عمومی کم‌اطلاعات `/wp-json/inkora/v1/health` دارد. ابزار ساخت محصول فقط در محیط local و برای مدیر دارای manage_woocommerce با nonce قابل استفاده است؛ روی فعال‌سازی خودکار داده نمی‌سازد. محصول آزمایشی ناموجود است تا قابل خرید نباشد. گزینه مخفی‌کردن محصولات ناموجود باید برای این آزمون خاموش باشد.
 

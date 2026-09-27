@@ -1,0 +1,2 @@
+import { getSmartProducts } from '$lib/server/commerce'; import { parseCompareIds } from '$lib/smart-shopping'; import type { PageServerLoad } from './$types';
+export const load: PageServerLoad = async ({ url, setHeaders }) => { setHeaders({ 'cache-control': 'no-store' }); const ids = parseCompareIds(url.searchParams.get('products')); try { return { status: 'ready', products: await getSmartProducts(), ids }; } catch { return { status: 'error', products: [], ids }; } };

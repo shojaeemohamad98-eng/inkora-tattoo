@@ -1,81 +1,34 @@
 <?php
 /**
  * Plugin Name: Inkora Core
- * Description: Inkora platform integration and local phase-one connection test.
- * Version: 0.1.0
+ * Description: Inkora platform integration and product decision metadata.
+ * Version: 0.2.0
  * Requires PHP: 8.2
  * Requires Plugins: woocommerce
  * Text Domain: inkora-core
  */
-
 defined('ABSPATH') || exit;
-
-add_action('rest_api_init', function () {
-    register_rest_route('inkora/v1', '/health', array(
-        'methods' => 'GET',
-        'permission_callback' => '__return_true',
-        'callback' => function () {
-            return rest_ensure_response(array('plugin' => 'inkora-core', 'version' => '0.1.0', 'woocommerce' => class_exists('WooCommerce')));
-        },
-    ));
-    register_rest_route('inkora/v1', '/seed', array(
-        'methods' => 'POST',
-        'permission_callback' => '__return_true',
-        'callback' => function () {
-            $result = inkora_seed_test_product();
-            if (is_wp_error($result)) return $result;
-            return rest_ensure_response(array('product_id' => (int) $result, 'slug' => 'inkora-phase-01-test'));
-        },
-    ));
-});
-
-/** Explicit local-only, repeatable seed; never runs on activation. */
-function inkora_seed_test_product() {
-    if ('local' !== wp_get_environment_type()) {
-        return new WP_Error('not_local', 'Test data is only allowed in a local environment.');
-    }
-    if (!class_exists('WC_Product_Simple')) {
-        return new WP_Error('no_woocommerce', 'Activate WooCommerce first.');
-    }
-    if ('IRR' !== get_woocommerce_currency()) {
-        return new WP_Error('currency', 'Set WooCommerce currency to Iranian rial (IRR) before creating the test product.');
-    }
-    $existing = wc_get_product_id_by_sku('INKORA-PHASE-01');
-    if ($existing) {
-        $product = wc_get_product($existing);
-        $product->set_name('محصول آزمایشی اتصال اینکورا');
-        $product->set_slug('inkora-phase-01-test');
-        $product->set_status('publish');
-        $product->set_regular_price('1250000');
-        $product->set_stock_status('outofstock');
-        $product->save();
-        return $existing;
-    }
-    $product = new WC_Product_Simple();
-    $product->set_name('محصول آزمایشی اتصال اینکورا');
-    $product->set_slug('inkora-phase-01-test');
-    $product->set_sku('INKORA-PHASE-01');
-    $product->set_status('publish');
-    $product->set_catalog_visibility('visible');
-    $product->set_description('فقط برای آزمون اتصال محلی فاز ۱؛ برای فروش واقعی نیست.');
-    $product->set_regular_price('1250000');
-    $product->set_stock_status('outofstock');
-    return $product->save();
+const INKORA_META_VERSION = '1';
+const INKORA_META_GROUP = '_inkora_smart_group'; const INKORA_META_SKILL = '_inkora_smart_skill'; const INKORA_META_STYLES = '_inkora_smart_styles'; const INKORA_META_TECHNIQUES = '_inkora_smart_techniques'; const INKORA_META_SPECS = '_inkora_smart_specs';
+function inkora_smart_enums() { return array('groups' => array('machine','needle','ink'), 'skills' => array('beginner','intermediate','professional'), 'styles' => array('linework','shading','color','blackwork','realism','traditional'), 'machine_types' => array('pen','rotary','coil'), 'ink_types' => array('lining','shading','color','greywash')); }
+function inkora_smart_clean_list($value, $allowed) { $values = is_array($value) ? $value : explode(',', (string) $value); $values = array_map('sanitize_key', $values); return array_values(array_unique(array_filter($values, function ($item) use ($allowed) { return in_array($item, $allowed, true); }))); }
+/** Validate the small public schema. Unknown or absent data is never exposed or inferred. */
+function inkora_smart_normalize($raw) {
+    $enums = inkora_smart_enums(); $group = sanitize_key($raw['group'] ?? ''); if (!in_array($group, $enums['groups'], true)) return null;
+    $result = array('schema_version' => INKORA_META_VERSION, 'group' => $group); $skill = sanitize_key($raw['skill'] ?? ''); if (in_array($skill, $enums['skills'], true)) $result['skill_level'] = $skill;
+    $styles = inkora_smart_clean_list($raw['styles'] ?? array(), $enums['styles']); if ($styles) $result['supported_styles'] = $styles;
+    $techniques = is_array($raw['techniques'] ?? null) ? $raw['techniques'] : explode(',', (string) ($raw['techniques'] ?? '')); $techniques = array_values(array_unique(array_filter(array_map('sanitize_key', $techniques)))); if ($techniques) $result['techniques'] = $techniques;
+    $specs = array();
+    if ($group === 'machine') { $type = sanitize_key($raw['machine_type'] ?? ''); if (in_array($type, $enums['machine_types'], true)) $specs['machine_type'] = $type; foreach (array('stroke_mm'=>array(1,5),'voltage_min'=>array(1,20),'voltage_max'=>array(1,20)) as $key=>$range) { if (($raw[$key] ?? '') !== '' && is_numeric($raw[$key])) { $number=(float)$raw[$key]; if ($number >= $range[0] && $number <= $range[1]) $specs[$key]=$number; } } if (isset($specs['voltage_min'],$specs['voltage_max']) && $specs['voltage_min'] > $specs['voltage_max']) return null; }
+    if ($group === 'needle') { $configuration = strtoupper(preg_replace('/[^A-Za-z]/', '', (string) ($raw['needle_configuration'] ?? ''))); if ($configuration) $specs['needle_configuration'] = substr($configuration, 0, 8); if (is_numeric($raw['needle_count'] ?? null)) { $count=(int)$raw['needle_count']; if ($count >= 1 && $count <= 99) $specs['needle_count']=$count; } if (($raw['diameter_mm'] ?? '') !== '' && is_numeric($raw['diameter_mm'])) { $diameter=(float)$raw['diameter_mm']; if ($diameter >= .15 && $diameter <= .5) $specs['diameter_mm']=$diameter; } }
+    if ($group === 'ink') { $type=sanitize_key($raw['ink_type'] ?? ''); if (in_array($type,$enums['ink_types'],true)) $specs['ink_type']=$type; $family=sanitize_key($raw['color_family'] ?? ''); if ($family) $specs['color_family']=substr($family,0,32); }
+    if ($specs) $result['specifications']=$specs; return $result;
 }
-
-add_action('admin_menu', function () {
-    if ('local' !== wp_get_environment_type()) return;
-    add_management_page('Inkora test', 'Inkora test', 'manage_woocommerce', 'inkora-test', function () {
-        if (!current_user_can('manage_woocommerce')) return;
-        echo '<div class="wrap"><h1>Inkora — local connection test</h1>';
-        if (isset($_POST['inkora_seed'])) {
-            check_admin_referer('inkora_seed');
-            $result = inkora_seed_test_product();
-            echo '<p>' . esc_html(is_wp_error($result) ? $result->get_error_message() : 'Test product ID: ' . $result) . '</p>';
-        }
-        echo '<p>Use IRR currency. Price: 1,250,000 rial = 125,000 toman. Product is out of stock to prevent purchases.</p><form method="post">';
-        wp_nonce_field('inkora_seed');
-        submit_button('Create / find test product', 'primary', 'inkora_seed');
-        echo '</form></div>';
-    });
-});
+function inkora_smart_get_product_data($product) { if (!$product instanceof WC_Product || $product->get_status() !== 'publish' || !$product->is_in_stock() || $product->get_sku() === 'INKORA-PHASE-01') return null; $group=get_post_meta($product->get_id(),INKORA_META_GROUP,true); if (!$group) return null; $raw=array('group'=>$group,'skill'=>get_post_meta($product->get_id(),INKORA_META_SKILL,true),'styles'=>get_post_meta($product->get_id(),INKORA_META_STYLES,true),'techniques'=>get_post_meta($product->get_id(),INKORA_META_TECHNIQUES,true)); return inkora_smart_normalize(array_merge($raw,(array)get_post_meta($product->get_id(),INKORA_META_SPECS,true))); }
+add_action('woocommerce_blocks_loaded', function () { if (!function_exists('woocommerce_store_api_register_endpoint_data')) return; woocommerce_store_api_register_endpoint_data(array('endpoint'=>'product','namespace'=>'inkora_smart','data_callback'=>'inkora_smart_get_product_data','schema_callback'=>function(){ return array('description'=>'Validated public Inkora product decision metadata.','type'=>'object','readonly'=>true,'properties'=>array()); },'schema_type'=>ARRAY_A)); });
+add_action('woocommerce_product_data_tabs', function ($tabs) { $tabs['inkora_smart']=array('label'=>'Inkora smart shopping','target'=>'inkora_smart_product_data','priority'=>80); return $tabs; });
+add_action('woocommerce_product_data_panels', function () { echo '<div id="inkora_smart_product_data" class="panel woocommerce_options_panel hidden"><div class="options_group"><p class="form-field"><strong>Inkora smart shopping (public fields only)</strong><br>Only published, in-stock products with a valid group appear in advisor/compare. Incomplete data is not recommended.</p>'; woocommerce_wp_select(array('id'=>'inkora_smart_group','label'=>'Comparable group','options'=>array(''=>'— No smart-shopping data —','machine'=>'Machine','needle'=>'Needle / cartridge','ink'=>'Ink'))); woocommerce_wp_select(array('id'=>'inkora_smart_skill','label'=>'Skill level','options'=>array(''=>'— Not stated —','beginner'=>'Beginner','intermediate'=>'Intermediate','professional'=>'Professional'))); woocommerce_wp_text_input(array('id'=>'inkora_smart_styles','label'=>'Styles (comma slugs)','description'=>'linework, shading, color, blackwork, realism, traditional','desc_tip'=>true)); woocommerce_wp_text_input(array('id'=>'inkora_smart_techniques','label'=>'Techniques (comma slugs)','description'=>'Use short technical slugs, for example lining or packing.','desc_tip'=>true)); woocommerce_wp_select(array('id'=>'inkora_machine_type','label'=>'Machine type','options'=>array(''=>'—','pen'=>'Pen','rotary'=>'Rotary','coil'=>'Coil'))); woocommerce_wp_text_input(array('id'=>'inkora_stroke_mm','label'=>'Stroke (mm)','type'=>'number','custom_attributes'=>array('step'=>'0.1','min'=>'1','max'=>'5'))); woocommerce_wp_text_input(array('id'=>'inkora_voltage_min','label'=>'Minimum voltage (V)','type'=>'number','custom_attributes'=>array('step'=>'0.1','min'=>'1','max'=>'20'))); woocommerce_wp_text_input(array('id'=>'inkora_voltage_max','label'=>'Maximum voltage (V)','type'=>'number','custom_attributes'=>array('step'=>'0.1','min'=>'1','max'=>'20'))); woocommerce_wp_text_input(array('id'=>'inkora_needle_configuration','label'=>'Needle configuration','description'=>'Letters only, e.g. RL or RM.','desc_tip'=>true)); woocommerce_wp_text_input(array('id'=>'inkora_needle_count','label'=>'Needle count','type'=>'number','custom_attributes'=>array('min'=>'1','max'=>'99'))); woocommerce_wp_text_input(array('id'=>'inkora_diameter_mm','label'=>'Needle diameter (mm)','type'=>'number','custom_attributes'=>array('step'=>'0.01','min'=>'0.15','max'=>'0.5'))); woocommerce_wp_select(array('id'=>'inkora_ink_type','label'=>'Ink type','options'=>array(''=>'—','lining'=>'Lining','shading'=>'Shading','color'=>'Color','greywash'=>'Greywash'))); woocommerce_wp_text_input(array('id'=>'inkora_color_family','label'=>'Color family (slug)','description'=>'Public label only; never supplier notes.','desc_tip'=>true)); echo '</div></div>'; });
+add_action('woocommerce_process_product_meta', function ($product_id) { if (!current_user_can('edit_post',$product_id) || !isset($_POST['woocommerce_meta_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['woocommerce_meta_nonce'])),'woocommerce_save_data')) return; $fields=array('group'=>'inkora_smart_group','skill'=>'inkora_smart_skill','styles'=>'inkora_smart_styles','techniques'=>'inkora_smart_techniques','machine_type'=>'inkora_machine_type','stroke_mm'=>'inkora_stroke_mm','voltage_min'=>'inkora_voltage_min','voltage_max'=>'inkora_voltage_max','needle_configuration'=>'inkora_needle_configuration','needle_count'=>'inkora_needle_count','diameter_mm'=>'inkora_diameter_mm','ink_type'=>'inkora_ink_type','color_family'=>'inkora_color_family'); $raw=array(); foreach ($fields as $field=>$key) $raw[$field]=isset($_POST[$key]) ? wp_unslash($_POST[$key]) : ''; $normalized=inkora_smart_normalize($raw); if (!$normalized) { foreach (array_merge(array(INKORA_META_GROUP,INKORA_META_SKILL,INKORA_META_STYLES,INKORA_META_TECHNIQUES,INKORA_META_SPECS),array_values($fields)) as $key) delete_post_meta($product_id,$key); return; } foreach ($fields as $field=>$key) update_post_meta($product_id,$key,sanitize_text_field((string)$raw[$field])); update_post_meta($product_id,INKORA_META_GROUP,$normalized['group']); update_post_meta($product_id,INKORA_META_SKILL,$normalized['skill_level'] ?? ''); update_post_meta($product_id,INKORA_META_STYLES,$normalized['supported_styles'] ?? array()); update_post_meta($product_id,INKORA_META_TECHNIQUES,$normalized['techniques'] ?? array()); update_post_meta($product_id,INKORA_META_SPECS,$normalized['specifications'] ?? array()); });
+add_action('rest_api_init', function () { register_rest_route('inkora/v1','/health',array('methods'=>'GET','permission_callback'=>'__return_true','callback'=>function(){return rest_ensure_response(array('plugin'=>'inkora-core','version'=>'0.2.0','woocommerce'=>class_exists('WooCommerce')));})); register_rest_route('inkora/v1','/seed',array('methods'=>'POST','permission_callback'=>function($request){return current_user_can('manage_woocommerce') && wp_verify_nonce($request->get_header('X-WP-Nonce'),'wp_rest');},'callback'=>function(){ $result=inkora_seed_test_product(); return is_wp_error($result)?$result:rest_ensure_response(array('product_id'=>(int)$result,'slug'=>'inkora-phase-01-test'));})); });
+function inkora_seed_test_product() { if ('local'!==wp_get_environment_type()) return new WP_Error('not_local','Test data is only allowed in a local environment.'); if (!class_exists('WC_Product_Simple')) return new WP_Error('no_woocommerce','Activate WooCommerce first.'); if ('IRR'!==get_woocommerce_currency()) return new WP_Error('currency','Set WooCommerce currency to Iranian rial (IRR).'); $existing=wc_get_product_id_by_sku('INKORA-PHASE-01'); $product=$existing?wc_get_product($existing):new WC_Product_Simple(); $product->set_name('محصول آزمایشی اتصال اینکورا'); $product->set_slug('inkora-phase-01-test'); $product->set_sku('INKORA-PHASE-01'); $product->set_status('publish'); $product->set_catalog_visibility('visible'); $product->set_regular_price('1250000'); $product->set_stock_status('outofstock'); if (!$existing) $product->set_description('فقط برای آزمون اتصال محلی فاز ۱؛ برای فروش واقعی نیست.'); return $product->save(); }
+add_action('admin_menu', function () { if ('local' !== wp_get_environment_type()) return; add_management_page('Inkora test','Inkora test','manage_woocommerce','inkora-test',function(){ if (current_user_can('manage_woocommerce')) echo '<div class="wrap"><h1>Inkora — local connection test</h1><p>Test product is out of stock and excluded from catalog, advisor and comparison.</p></div>'; }); });

@@ -9,4 +9,6 @@ if (Test-Path -LiteralPath $target) {
 }
 New-Item -ItemType Directory -Path $target -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $projectRoot 'wordpress\plugins\inkora-core\inkora-core.php') -Destination (Join-Path $target 'inkora-core.php') -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'wordpress\plugins\inkora-core\community.php') -Destination (Join-Path $target 'community.php') -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'wordpress\plugins\inkora-core\community-policy.php') -Destination (Join-Path $target 'community-policy.php') -Force
 Write-Output "Copied inkora-core to $target. Activate it in the NEW site's WordPress admin."

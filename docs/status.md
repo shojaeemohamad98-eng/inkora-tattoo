@@ -13,7 +13,7 @@
 | ۵ | پیشنهاد محصول، مقایسه و شبیه‌ساز | کامل در محدودهٔ دادهٔ واقعیِ فعلی؛ برای نتیجهٔ عملی، محصولات واقعیِ موجود و metadata لازم‌اند |
 | ۶ | محتوای AI با بازبینی انسانی | کامل در محدودهٔ review-first؛ بدون API AI یا انتشار خودکار |
 | ۷ | صفحات ویژه و 3D سبک | کامل در محدودهٔ نمونهٔ محلی؛ CSS 3D/visual انتزاعی، بدون مدل واقعی، عکس خارجی یا WebGL |
-| ۸ | جامعه هنرمندان | شروع نشده |
+| ۸ | جامعه هنرمندان | کامل در محدودهٔ local-first؛ پروفایل/درخواست و بازبینی خصوصی، API عمومی حداقلی و empty state؛ گالری و تعاملات تا policy/زیرساخت لازم بسته‌اند |
 
 افتتاح فقط پس از فاز ۴ و آزمون کامل خرید. کنترل‌های فازهای پیشرفته تا آماده‌شدن با توضیح غیرفعال خواهند بود؛ صفحه آزمون فاز ۱ چنین کنترل‌هایی ندارد. بررسی headless درگاه و تبدیل تومان/ریال در ابتدای مسیر فروشگاه انجام می‌شود.
 
@@ -44,6 +44,17 @@
 | visual و حرکت | CSS انتزاعی محلی؛ بدون Three.js، WebGL، GSAP، مدل، ویدئو، hotlink یا دارایی تصویری تازه |
 | fallback | محتوای کامل HTML/CSS، انتخاب‌گر button/keyboard/reset، focus و قانون prefers-reduced-motion |
 | QA | check بدون خطا/هشدار، 11 test موفق، QA 1440/768/390/320 بدون overflow؛ گزارش و اندازه‌ها در [experiences.md](experiences.md) |
+
+## دروازه فاز ۸
+
+| شرط | شواهد فعلی |
+|---|---|
+| domain و migration | `inkora-core` ۰٫۳٫۰، schema v1 افزایشی، roleهای محدود و رکوردهای private artist/portfolio/post؛ هیچ حساب یا محتوای واقعی ساخته نشد |
+| public API | `/wp-json/inkora/v1/community/artists` و `portfolio` هر دو HTTP 200 با آرایهٔ خالی واقعی، allowlist و feature flagهای false |
+| درخواست و بازبینی | فقط WordPress local، ورود + nonce + same-origin؛ self-review ممنوع، نقش approved فقط پس از review مستقل، حذف به Trash |
+| frontend | `/community`، `/artists`، `/portfolio` و `/community/apply` HTTP 200؛ `/artists/[slug]` پس از وجود رکورد approved قابل نمایش است |
+| privacy و media | draft/note/PII در API عمومی نیست؛ upload، follow، like، comment و قابلیت‌های آینده فعال نشده‌اند |
+| آزمون و QA | `pnpm check` صفر خطا/هشدار، `pnpm test` 11 موفق، build موفق، policy PHP 13 assertion موفق، QA 1440/768/390/320 بدون overflow و console error |
 
 ## دروازه فاز ۲
 

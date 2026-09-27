@@ -29,6 +29,8 @@ Home فقط دادهٔ نمایشی typeدار محلی در `src/lib/components
 
 inkora-core یک endpoint عمومی کم‌اطلاعات `/wp-json/inkora/v1/health` دارد. ابزار ساخت محصول فقط در محیط local و برای مدیر دارای manage_woocommerce با nonce قابل استفاده است؛ روی فعال‌سازی خودکار داده نمی‌سازد. محصول آزمایشی ناموجود است تا قابل خرید نباشد. گزینه مخفی‌کردن محصولات ناموجود باید برای این آزمون خاموش باشد.
 
+فاز ۸ domain جامعه را در `inkora-core` نگه می‌دارد. افزونهٔ سنگین شبکهٔ اجتماعی نصب نشده است: API عمومی محدود `/inkora/v1/community/{artists|portfolio}` صرفاً projection allowlist از profile/portfolioهای `published + public` می‌دهد. `src/lib/server/community.ts` تنها مصرف‌کنندهٔ frontend است. mutation فقط فرم same-origin WordPress با session، nonce، owner/moderator capability، optimistic revision و محیط `local` دارد؛ frontend به admin API وصل نیست. portfolio/post و interactionها schema/feature flag دارند، اما upload، follow، like، comment و message تا تکمیل privacy، media و anti-abuse transport ندارند. جزئیات و معیار انتخاب BuddyPress/BuddyBoss در `docs/community.md` است.
+
 ## محتوا و پول
 
 برای فاز ۱، فیلدهای استاندارد WooCommerce کافی‌اند؛ ACF نصب نمی‌شود. مدل‌های پیشرفته دستگاه، سوزن، رنگ و هنرمند در فاز مربوط بررسی می‌شوند و انتخاب ACF براساس نیاز واقعی و هزینه انجام خواهد شد.

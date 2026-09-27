@@ -8,7 +8,7 @@ const item = (id: string, title: string, english: string, kind: MediaKind, href?
 export const navigation = [
   { href: '/machines', label: 'دستگاه‌ها' }, { href: '/needles', label: 'سوزن‌ها' },
   { href: '/inks', label: 'رنگ‌ها' }, { href: '/journal', label: 'مجله' },
-  { href: '/about', label: 'دربارهٔ اینکورا' }
+  { href: '/community', label: 'جامعهٔ هنرمندان' }, { href: '/about', label: 'دربارهٔ اینکورا' }
 ];
 export const categories = [
   item('machines', 'دستگاه‌های تتو', 'TATTOO MACHINES', 'machine', '/machines'),

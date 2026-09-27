@@ -1,0 +1,74 @@
+@font-face {
+  font-family: Vazirmatn;
+  src: url('/assets/fonts/Vazirmatn-variable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Opt-in theme: the phase-01 diagnostic route remains independent. */
+.inkora-theme {
+  --ink-bg: #0b0c0f;
+  --ink-surface: #15161b;
+  --ink-raised: #202127;
+  --ink-text: #f5f3f0;
+  --ink-muted: #b7b6bd;
+  --ink-accent: #d62d42;
+  --ink-accent-hover: #b82034;
+  --ink-accent-active: #9e1d2e;
+  --ink-accent-text: #ff7e8c;
+  --ink-border: #3c3d46;
+  --ink-control-border: #85838d;
+  --ink-focus: #f0c89b;
+  --ink-success: #8ce2b2;
+  --ink-error: #ff9da7;
+  --ink-font: Vazirmatn, Tahoma, Arial, sans-serif;
+  --ink-text-xs: .75rem;
+  --ink-text-sm: .875rem;
+  --ink-text-base: 1rem;
+  --ink-text-lg: 1.25rem;
+  --ink-text-title: clamp(1.75rem, 3vw, 2.5rem);
+  --ink-text-display: clamp(2.25rem, 5vw, 4.5rem);
+  --ink-space-1: .25rem;
+  --ink-space-2: .5rem;
+  --ink-space-3: .75rem;
+  --ink-space-4: 1rem;
+  --ink-space-6: 1.5rem;
+  --ink-space-8: 2rem;
+  --ink-space-12: 3rem;
+  --ink-space-16: 4rem;
+  --ink-radius-sm: .5rem;
+  --ink-radius-card: 1rem;
+  --ink-radius-pill: 999px;
+  --ink-shadow: 0 16px 48px #00000040;
+  --ink-glass: linear-gradient(135deg, #ffffff09, #ffffff00), #15161bf2;
+  --ink-fast: 140ms;
+  --ink-normal: 220ms;
+  --ink-ease: cubic-bezier(.2,.7,.2,1);
+  --ink-container: 1200px;
+  color: var(--ink-text);
+  background: var(--ink-bg);
+  font-family: var(--ink-font);
+  line-height: 1.9;
+  color-scheme: dark;
+}
+.inkora-theme *, .inkora-theme *::before, .inkora-theme *::after { box-sizing: border-box; }
+.inkora-theme :focus-visible { outline: 3px solid var(--ink-focus); outline-offset: 4px; }
+.inkora-theme .ink-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--ink-space-2);
+  min-height: 48px; padding: .65rem 1.35rem; border-radius: var(--ink-radius-pill);
+  border: 1px solid transparent; background: var(--ink-accent); color: #fff;
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  transition: background var(--ink-fast) var(--ink-ease), transform var(--ink-fast) var(--ink-ease);
+}
+.inkora-theme .ink-button:hover:not(:disabled) { background: var(--ink-accent-hover); }
+.inkora-theme .ink-button:active:not(:disabled) { background: var(--ink-accent-active); transform: translateY(1px); }
+.inkora-theme .ink-button.secondary { background: var(--ink-surface); border-color: var(--ink-control-border); }
+.inkora-theme .ink-button.secondary:hover:not(:disabled) { background: var(--ink-raised); }
+.inkora-theme .ink-button:disabled { background: var(--ink-raised); color: var(--ink-muted); border-color: var(--ink-border); cursor: not-allowed; }
+.inkora-theme .ink-panel { background: var(--ink-glass); border: 1px solid var(--ink-border); border-radius: var(--ink-radius-card); box-shadow: var(--ink-shadow); }
+.inkora-theme .ink-input { width: 100%; min-height: 48px; padding: .7rem 1rem; background: var(--ink-bg); border: 1px solid var(--ink-control-border); border-radius: var(--ink-radius-sm); color: var(--ink-text); font: inherit; }
+.inkora-theme .ink-input[aria-invalid='true'] { border-color: var(--ink-error); }
+@media (prefers-reduced-motion: reduce) {
+  .inkora-theme *, .inkora-theme *::before, .inkora-theme *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 90" role="img" aria-labelledby="title desc">
+  <title id="title">INKORA — temporary wordmark</title>
+  <desc id="desc">Simple typographic placeholder, not the approved final skull logo.</desc>
+  <path d="M8 18v54" stroke="#d62d42" stroke-width="4"/>
+  <text x="28" y="48" font-family="Arial,sans-serif" font-size="38" font-weight="700" letter-spacing="6" fill="#f5f3f0">INKORA</text>
+  <text x="30" y="71" font-family="Arial,sans-serif" font-size="11" letter-spacing="4" fill="#b7b6bd">TATTOO SUPPLY</text>
+</svg>

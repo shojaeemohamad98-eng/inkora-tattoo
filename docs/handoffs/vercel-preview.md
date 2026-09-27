@@ -4,7 +4,7 @@
 
 ## وضعیت واقعی
 
-- شاخه: `codex/vercel-preview`؛ commit آماده‌سازی در تاریخچهٔ همین شاخه ثبت می‌شود.
+- شاخه: `codex/vercel-preview`؛ commit کد آماده‌سازی: `aeee22f`. Push این commit به `origin/codex/vercel-preview` موفق شد؛ main تغییر نکرد. commit بعدی فقط همین ثبت نتیجه را اضافه می‌کند.
 - URL آنلاین: هنوز وجود ندارد/تأیید نشده است.
 - ورود کاربر: هنوز تأیید نشده؛ تب مرورگر Vercel صفحه Login با `account_not_found` نشان می‌داد. هیچ رمز، کلید، cookie یا session خوانده یا منتقل نشده است.
 - CLI سراسری Vercel در PATH موجود نبود؛ deployment یا import انجام نشده است.

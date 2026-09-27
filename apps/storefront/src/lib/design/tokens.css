@@ -22,7 +22,8 @@
   --ink-focus: #f0c89b;
   --ink-success: #8ce2b2;
   --ink-error: #ff9da7;
-  --ink-font: Vazirmatn, Tahoma, Arial, sans-serif;
+  --ink-font: 'Segoe UI', Vazirmatn, Tahoma, Arial, sans-serif;
+  --ink-display-font: Georgia, 'Times New Roman', Vazirmatn, serif;
   --ink-text-xs: .75rem;
   --ink-text-sm: .875rem;
   --ink-text-base: 1rem;
@@ -47,7 +48,7 @@
   --ink-ease: cubic-bezier(.2,.7,.2,1);
   --ink-container: 1200px;
   color: var(--ink-text);
-  background: var(--ink-bg);
+  background: var(--ink-bg) url('/assets/visual/inkora-tattoo-studio-background-v1.png') center top / max(1440px, 100%) auto fixed no-repeat;
   font-family: var(--ink-font);
   line-height: 1.9;
   color-scheme: dark;

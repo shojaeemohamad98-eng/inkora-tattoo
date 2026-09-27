@@ -1,5 +1,5 @@
 @import 'tailwindcss';
 @theme { --font-sans: Tahoma, Arial, sans-serif; }
-body { margin: 0; background: #f6f7f9; color: #18222d; font-family: var(--font-sans); line-height: 1.9; }
+body { margin: 0; background: #090a0d; color: #18222d; font-family: var(--font-sans); line-height: 1.9; }
 button, a { touch-action: manipulation; }
 :focus-visible { outline: 3px solid #2563eb; outline-offset: 4px; }

@@ -13,7 +13,7 @@
   <article class="home-card support-card"><p class="eyebrow">دنیایی فراتر از مشکی</p><h2>رنگ‌های ترند</h2><div class="color-swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><p>پالت صرفاً نمایشی؛ ادعای محبوبیت یا موجودی ندارد.</p><FutureButton label="کشف پالت‌ها · فاز بعد" icon="arrow" /></article>
 </section>
 <section class="home-section" id="journal" aria-labelledby="journal-title">
-  <div class="section-heading"><div><p class="eyebrow">مجلهٔ اینکورا</p><h2 id="journal-title">پشت هر خط، یک داستان</h2></div><p>پیش‌نمایش موضوع‌ها؛ مقاله‌ای منتشر نشده است.</p></div>
-  <div class="article-grid">{#each articles as article}<article class="home-card article-card"><Media kind={article.kind} /><div><span class="sample-tag">{article.tag} · موضوع پیشنهادی</span><h3>{article.title}</h3><FutureButton label="مقاله · در فاز بعد" icon="arrow" /></div></article>{/each}</div>
+  <div class="section-heading"><div><p class="eyebrow">مجلهٔ اینکورا</p><h2 id="journal-title">پشت هر خط، یک داستان</h2></div><a class="home-action" href="/journal">مشاهدهٔ مقاله‌های بازبینی‌شده</a></div>
+  <div class="article-grid">{#each articles as article}<article class="home-card article-card"><Media kind={article.kind} /><div><span class="sample-tag">{article.tag} · موضوع پیشنهادی</span><h3>{article.title}</h3><p class="fineprint">تا پیش از بازبینی انسانی، هیچ مقاله‌ای منتشر نمی‌شود.</p></div></article>{/each}</div>
 </section>
 <section class="home-section brands-row" aria-labelledby="brands-title"><div><p class="eyebrow">نام‌های پشت ابزار</p><h2 id="brands-title">برندها</h2></div><p>پس از تأیید تأمین‌کنندگان و مجوز نشان‌ها معرفی می‌شوند.</p><span class="brand-placeholder" dir="ltr">INKORA / CURATED SELECTION — COMING LATER</span></section>

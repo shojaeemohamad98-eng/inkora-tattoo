@@ -23,6 +23,8 @@ Home فقط دادهٔ نمایشی typeدار محلی در `src/lib/components
 
 فاز ۵ قرارداد `SmartMetadata` را در `src/lib/smart-shopping.ts` و parsing آن را در client مرکزی `src/lib/server/commerce.ts` نگه می‌دارد. افزونه فقط metadata اعتبارسنجی‌شدهٔ کالاهای منتشرشده و موجود را در namespace `extensions.inkora_smart` Store API می‌گذارد. frontend مستقیماً endpoint یا WordPress را صدا نمی‌زند. شبیه‌ساز هیچ API ندارد و `URL.createObjectURL` مرورگر را برای پیش‌نمایش فایل محلی به کار می‌برد.
 
+فاز ۶ workflow محتوای AI-assisted را در خود WordPress نگه می‌دارد: نوشتهٔ دارای meta `AI-assisted` پیش از تصمیم انسانی `approved` نمی‌تواند منتشر شود. endpoint محدود `inkora/v1/journal` فقط دادهٔ public و کمینهٔ مقاله‌های published+approved را بازمی‌گرداند؛ `getReviewedJournalArticles` در کلاینت مرکزی تنها مصرف‌کنندهٔ frontend است. کلید، prompt، متن تولیدی خصوصی، یادداشت بازبین و خروجی سرویس AI در repo یا API عمومی وجود ندارد.
+
 inkora-core یک endpoint عمومی کم‌اطلاعات `/wp-json/inkora/v1/health` دارد. ابزار ساخت محصول فقط در محیط local و برای مدیر دارای manage_woocommerce با nonce قابل استفاده است؛ روی فعال‌سازی خودکار داده نمی‌سازد. محصول آزمایشی ناموجود است تا قابل خرید نباشد. گزینه مخفی‌کردن محصولات ناموجود باید برای این آزمون خاموش باشد.
 
 ## محتوا و پول

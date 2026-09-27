@@ -1,0 +1,7 @@
+<script lang="ts">
+  import { onMount } from 'svelte'; import { cartRequest, type ClientCart } from '$lib/client/cart';
+  let open = $state(false); let cart = $state<ClientCart | null>(null); let message = $state('');
+  function price(p: { price: string; currency_code: string; currency_minor_unit: number }) { const major = Number(p.price) / 10 ** p.currency_minor_unit; return `${new Intl.NumberFormat('fa-IR').format(p.currency_code === 'IRR' ? major / 10 : major)} تومان`; }
+  onMount(() => { const load = async () => { try { cart = await cartRequest(); } catch { message = 'سبد خرید در دسترس نیست.'; } }; load(); const update = (event: Event) => { cart = (event as CustomEvent<ClientCart>).detail; }; window.addEventListener('inkora:cart-updated', update); return () => window.removeEventListener('inkora:cart-updated', update); });
+</script>
+<div class="mini-cart"><button class="icon-link" aria-expanded={open} aria-controls="mini-cart-panel" onclick={() => open = !open}>سبد {cart?.items_count ? `(${cart.items_count})` : ''}</button>{#if open}<section id="mini-cart-panel" class="mini-cart-panel" aria-label="سبد خرید کوچک"><h2>سبد خرید</h2>{#if cart?.items?.length}{#each cart.items as item}<p>{item.name} × {item.quantity}</p>{/each}<strong>{price(cart.totals)}</strong><a class="button primary" href="/cart">مشاهده سبد و ادامه</a>{:else}<p>{message || 'سبد خرید شما خالی است.'}</p><a href="/shop">رفتن به فروشگاه</a>{/if}</section>{/if}</div>

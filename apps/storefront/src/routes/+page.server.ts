@@ -1,0 +1,2 @@
+import { getCategories, getProducts } from '$lib/server/commerce'; import type { PageServerLoad } from './$types';
+export const load: PageServerLoad = async ({ setHeaders }) => { setHeaders({ 'cache-control': 'no-store' }); try { const [products, categories] = await Promise.all([getProducts(), getCategories()]); return { status: 'ready', products: products.slice(0, 4), categories }; } catch { return { status: 'error', products: [], categories: [] }; } };

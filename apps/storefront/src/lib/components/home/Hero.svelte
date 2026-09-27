@@ -9,8 +9,8 @@
     <p class="eyebrow" dir="ltr">INKORA / THE ART OF EXPRESSION</p>
     <h1 id="hero-title">از ایده تا یک<br /><em>تتوی</em> ماندگار.</h1>
     <p class="hero-intro">دنیای تجهیزات، رنگ و الهام تتو؛<br />برای انتخابی که امضای تو باشد.</p>
-    <div class="hero-actions"><a class="home-action primary" href="#categories">کشف دسته‌بندی‌ها <Icon name="arrow" /></a><FutureButton label="تماشای ویدیو" icon="play" /></div>
-    <p class="fineprint">پیش‌نمایش اینکورا؛ فروش و خدمات هنوز فعال نیست.</p>
+    <div class="hero-actions"><a class="home-action primary" href="/shop">ورود به فروشگاه <Icon name="arrow" /></a><FutureButton label="تماشای ویدیو" icon="play" /></div>
+    <p class="fineprint">فقط کالاهای واقعی ثبت‌شده در فروشگاه محلی نمایش داده می‌شوند.</p>
   </div>
   <div class="hero-art"><Media large /><span class="hero-art-label" dir="ltr">PRECISION.<br />EXPRESSION.<br /><strong>INKORA.</strong></span></div>
   <aside class="home-card monthly">

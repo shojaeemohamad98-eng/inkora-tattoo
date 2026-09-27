@@ -1,0 +1,2 @@
+import { error } from '@sveltejs/kit'; import { getProduct } from '$lib/server/commerce'; import type { PageServerLoad } from './$types';
+export const load: PageServerLoad = async ({ params, setHeaders }) => { setHeaders({ 'cache-control': 'no-store' }); try { const product = await getProduct(params.slug); if (!product) throw error(404, 'کالا پیدا نشد.'); return { product }; } catch (cause) { if ((cause as { status?: number })?.status === 404) throw cause; throw error(503, 'فروشگاه در دسترس نیست.'); } };

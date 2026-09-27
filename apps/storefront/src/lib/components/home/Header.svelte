@@ -3,9 +3,8 @@
   import { navigation } from './data';
   let open = $state(false);
   let opener: HTMLButtonElement;
-  let message = $state('');
-  const actions: { name: IconName; label: string }[] = [
-    { name: 'user', label: 'حساب کاربری' }, { name: 'heart', label: 'علاقه‌مندی‌ها' }, { name: 'bag', label: 'سبد خرید' }
+  const actions: { name: IconName; label: string; href: string }[] = [
+    { name: 'user', label: 'حساب کاربری', href: '/account' }, { name: 'bag', label: 'سبد خرید', href: '/cart' }
   ];
   function close() { open = false; opener?.focus(); }
 </script>
@@ -16,22 +15,18 @@
       <img src="/assets/brand/inkora-wordmark-temporary.svg" width="164" height="52" alt="اینکورا؛ نوشتار موقت برند" />
       <span>نشان نوشتاری موقت</span>
     </a>
-    <div class="header-search">
-      <label for="home-search">جست‌وجوی تجهیزات <span>· در فاز بعد</span></label>
-      <div><input id="home-search" placeholder="دستگاه، رنگ، سوزن…" disabled /><Icon name="search" /></div>
-    </div>
+    <form class="header-search" action="/shop" method="GET"><label for="home-search">جست‌وجوی تجهیزات</label><div><input id="home-search" name="q" placeholder="نام کالا…" /><Icon name="search" /></div></form>
     <div class="header-actions">
-      {#each actions as action}<button class="icon-button" class:desktop-action={action.name !== 'bag'} aria-label={`${action.label}؛ در فاز بعد`} onclick={() => message = `${action.label}: در فاز بعد آماده می‌شود.`}><Icon name={action.name} /></button>{/each}
+      {#each actions as action}<a class="icon-button" class:desktop-action={action.name !== 'bag'} aria-label={action.label} href={action.href}><Icon name={action.name} /></a>{/each}
       <button bind:this={opener} class="icon-button menu-toggle" aria-label={open ? 'بستن منو' : 'باز کردن منو'} aria-expanded={open} aria-controls="home-navigation" onclick={() => open = !open}><Icon name={open ? 'close' : 'menu'} /></button>
     </div>
   </div>
-  <div class="home-container"><p class="header-status" role="status">{message}</p></div>
   <div class="header-nav-shell">
     <nav id="home-navigation" class="home-container home-nav" class:open aria-label="منوی اصلی">
-      <a href="/" aria-current="page" onclick={() => open = false}>صفحه اصلی</a>
+      <a href="/" aria-current="page" onclick={() => open = false}>صفحه اصلی</a><a href="/shop" onclick={() => open = false}>فروشگاه</a>
       {#each navigation as link}<a href={link.href} onclick={() => open = false}>{link.label}</a>{/each}
-      <div class="mobile-actions">{#each actions.slice(0, 2) as action}<button class="home-action" onclick={() => message = `${action.label}: در فاز بعد آماده می‌شود.`}>{action.label}</button>{/each}</div>
-      <span class="nav-note">نسخهٔ نمایشی · خرید غیرفعال</span>
+      <div class="mobile-actions">{#each actions as action}<a class="home-action" href={action.href}>{action.label}</a>{/each}</div>
+      <span class="nav-note">فروشگاه محلی · فقط کالاهای واقعی</span>
     </nav>
   </div>
 </header>

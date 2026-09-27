@@ -43,7 +43,7 @@ schema version فعلی `1` در option `inkora_community_schema` و در هر r
 
 1. Local را باز و سایت **Inkora Tattoo / `inkora.test.local`** را روشن کنید.
 2. در ریشهٔ پروژه، `powershell -ExecutionPolicy Bypass -File .\scripts\sync-plugin.ps1` را اجرا کنید؛ این فقط افزونهٔ همین پروژه را در همان سایت جدید کپی می‌کند.
-3. در WordPress همان سایت، افزونهٔ **Inkora Core** را فعال یا یک‌بار غیرفعال/فعال کنید. سپس frontend را با `powershell -ExecutionPolicy Bypass -File .\scripts\pnpm.ps1 dev` اجرا کنید.
+3. در WordPress همان سایت، افزونهٔ **Inkora Core** را فعال یا یک‌بار غیرفعال/فعال کنید. سپس frontend را با `powershell -ExecutionPolicy Bypass -Command "& .\scripts\pnpm.ps1 -Arguments @('dev')"` اجرا کنید.
 4. `/community`، `/artists` و `/portfolio` را باز کنید. بدون دادهٔ واقعی، پیام خالی صحیح را می‌بینید.
 5. از `/community/apply` وارد شوید؛ فرم فقط پس از ورود به WordPress ظاهر می‌شود. مدیر یا moderator از همان صفحهٔ خصوصی، درخواست را بررسی می‌کند. این صفحه noindex و no-store است.
 

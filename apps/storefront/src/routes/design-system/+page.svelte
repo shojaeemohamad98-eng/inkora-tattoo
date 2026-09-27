@@ -1,7 +1,6 @@
 <script lang="ts">
   import '$lib/design/tokens.css';
   import PreviewCard from '$lib/design/PreviewCard.svelte';
-  import logoReference from '../../../../../docs/assets/reference/logo-04-preview.png';
   let selected = $state(false);
   let sampleName = $state('');
   const palette = [
@@ -42,7 +41,7 @@
     <section id="identity" aria-labelledby="identity-heading">
       <div class="section-head"><div><p class="eyebrow">01 / هویت برند</p><h2 id="identity-heading">انتخاب تثبیت‌شده، اجرای موقت</h2></div><span class="subtle">لوگوی نهایی در انتظار فایل اصلی</span></div>
       <div class="identity-grid">
-        <figure class="ink-panel reference"><img src={logoReference} alt="برش مرجع طرح شمارهٔ ۰۴: نشان دایره‌ای جمجمه با متن INKORA و TATTOO SUPPLY" width="365" height="299" /><figcaption>طرح ۰۴ · مرجع انتخاب کاربر؛ فقط پیش‌نمایش</figcaption></figure>
+        <figure class="ink-panel reference"><p>مرجع داخلی فقط در docs/assets/reference نگهداری می‌شود.</p><figcaption>طرح ۰۴ · مرجع انتخاب کاربر؛ فقط پیش‌نمایش</figcaption></figure>
         <div class="ink-panel brand-copy"><img src="/assets/brand/inkora-wordmark-temporary.svg" alt="نوشتار موقت اینکورا بدون نماد جمجمه" width="320" height="90" /><h3>نوشتار موقت برای ادامهٔ طراحی</h3><p>این نسخه جای لوگوی نهایی نیست. نشان اصلی دایره‌ای و جمجمه‌دار، پس از دریافت فایل مجاز و باکیفیت جایگزین می‌شود.</p><span class="tag">بدون بازطراحی جمجمه یا حذف واترمارک</span></div>
       </div>
     </section>
@@ -96,7 +95,6 @@
   .subtle, .brand-copy p { color: var(--ink-muted); font-size: var(--ink-text-sm); }
   .identity-grid { display: grid; grid-template-columns: 1fr 1.7fr; gap: 20px; }
   .reference { margin: 0; padding: 16px; text-align: center; }
-  .reference img { width: 100%; max-width: 300px; height: auto; margin: auto; }
   figcaption { color: var(--ink-muted); font-size: var(--ink-text-xs); margin-top: 12px; }
   .brand-copy { padding: 36px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
   .brand-copy img { max-width: 100%; height: auto; margin-bottom: 24px; }

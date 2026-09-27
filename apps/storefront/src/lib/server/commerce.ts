@@ -1,3 +1,4 @@
+import { wordpressBase } from './backend';
 import { env } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
 import type { SmartMetadata } from '$lib/smart-shopping';
@@ -11,7 +12,7 @@ export type JournalArticle = { id: number; slug: string; title: string; excerpt:
 export type CartItem = { key: string; id: number; name: string; quantity: number; quantity_limits: { minimum: number; maximum: number; editable: boolean }; prices: Prices; totals: Prices & { line_total: string }; images: ProductImage[]; stock_availability: { text: string } };
 export type Cart = { items: CartItem[]; totals: Prices & { total_price: string; total_items: string; total_shipping: string | null; total_tax: string }; items_count: number; needs_shipping: boolean; needs_payment: boolean; shipping_rates: unknown[]; payment_methods: string[]; errors: unknown[] };
 const STORE_PATH = '/wp-json/wc/store/v1/'; const cartCookie = 'inkora_cart_token';
-function baseUrl() { if (!env.WORDPRESS_URL) throw new Error('WORDPRESS_URL is not configured'); const url = new URL(env.WORDPRESS_URL); if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Invalid API protocol'); return url; }
+function baseUrl() { const url = wordpressBase(); if (!url) throw new Error('Store backend unavailable'); return url; }
 function testSlug() { return env.INKORA_TEST_PRODUCT_SLUG || 'inkora-phase-01-test'; }
 function isPrices(v: any): v is Prices { return typeof v?.price === 'string' && typeof v?.currency_code === 'string' && Number.isInteger(v?.currency_minor_unit); }
 function isCurrency(v: any) { return typeof v?.currency_code === 'string' && Number.isInteger(v?.currency_minor_unit); }

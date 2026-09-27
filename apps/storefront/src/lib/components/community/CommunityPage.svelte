@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dev } from '$app/environment';
   import '$lib/design/tokens.css';
   import '$lib/components/commerce/store.css';
   import type { CommunityData, CommunityItem } from '$lib/community';
@@ -31,7 +32,7 @@
       <p class="eyebrow">INKORA COMMUNITY · نسخهٔ محلی</p>
       <h1>{profile?.name || titles[view]}</h1>
       <p class="lead">فضایی برای معرفی هنرمند و احترام به حق اثر. هر پروفایل پیش از نمایش عمومی بازبینی می‌شود؛ انتخاب خصوصی‌ماندن با صاحب پروفایل است.</p>
-      {#if view !== 'apply'}<a class="button primary" href="/community/apply">درخواست پروفایل هنرمند</a>{/if}
+      {#if view !== 'apply' && dev}<a class="button primary" href="/community/apply">درخواست پروفایل هنرمند</a>{:else if !dev}<p class="muted">درخواست عضویت در پیش‌نمایش فعال نیست.</p>{/if}
     </header>
 
     {#if view === 'apply'}

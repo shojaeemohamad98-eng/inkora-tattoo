@@ -1,4 +1,5 @@
-import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
+import { wordpressBase } from './backend';
 import type { CommunityItem, CommunityData } from '$lib/community';
 
 function item(value: unknown): CommunityItem {
@@ -13,9 +14,10 @@ function item(value: unknown): CommunityItem {
 export async function getCommunity(kind: 'artists' | 'portfolio', slug?: string, page = 1): Promise<CommunityData> {
   let portal = '';
   try {
-    const base = new URL(env.WORDPRESS_URL || '');
+    const base = wordpressBase();
+    if (!base) throw new Error('Community unavailable');
     if (!['http:', 'https:'].includes(base.protocol)) throw new Error('Invalid WordPress URL');
-    portal = new URL('/wp-admin/admin-post.php?action=inkora_community_portal', base).href;
+    portal = dev ? new URL('/wp-admin/admin-post.php?action=inkora_community_portal', base).href : '';
     const url = new URL(`/wp-json/inkora/v1/community/${kind}`, base);
     if (slug) url.searchParams.set('slug', slug);
     url.searchParams.set('page', String(page));

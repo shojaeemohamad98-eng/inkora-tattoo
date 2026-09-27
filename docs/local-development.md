@@ -1,5 +1,20 @@
 # اجرای محلی — راهنمای ساده
 
+## اجرای روزمره پس از فاز ۳
+
+سایت موجود **Inkora Tattoo** قبلاً ساخته شده و دامنهٔ واقعی آن `inkora.test.local` است؛ برای ادامه سایت تازه نسازید. در ریشهٔ پروژه فقط دستور زیر را اجرا کنید:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\pnpm.ps1 dev
+```
+
+- صفحه اصلی: `http://127.0.0.1:5173/`؛ مستقل از روشن‌بودن WordPress.
+- دفتر طراحی: `http://127.0.0.1:5173/design-system`.
+- آزمون اتصال: `http://127.0.0.1:5173/integration-check`؛ در برنامه Local همان سایت **Inkora Tattoo** را Start کنید. سایت قدیمی Inkora را تغییر ندهید.
+- تأیید زنده: `powershell -ExecutionPolicy Bypass -File .\scripts\pnpm.ps1 verify:live`.
+
+در بررسی فاز ۳، frontend سالم بود اما WordPress پاسخ نداد؛ دیدن HTTP 200 صفحهٔ آزمون به‌تنهایی به معنی اتصال موفق محصول نیست. مراحل زیر تاریخچهٔ نصب اولیه‌اند؛ برای اجرای روزمره نصب مجدد یا کپی مجدد `.env` لازم نیست.
+
 ## ۱. ساخت سایت جدید با Local
 
 Local برنامه اجرای WordPress روی رایانه است. در بررسی اولیه فقط سایت قدیمی Inkora ثبت شده بود. سایت قدیمی را تغییر ندهید.

@@ -1,12 +1,12 @@
 # معماری مصوب Inkora
 
-تاریخ: 2026-09-26. محدوده فاز ۱ فقط زیرساخت محلی و آزمون اتصال محصول است.
+به‌روزرسانی: 2026-09-27. زیرساخت فاز ۱ حفظ شده و صفحه اصلی نمایشی فاز ۳ اضافه شده است.
 
 ## مسیرها و مرزها
 
 ریشه منبع: `C:\Users\moham\Local Sites\inkora tattoo`.
 
-- `apps/storefront`: SvelteKit، TypeScript، Tailwind و Bits UI. فعلاً یک صفحه آزمون RTL فارسی؛ طراحی صفحه اصلی در فاز ۳.
+- `apps/storefront`: SvelteKit، TypeScript، Tailwind و Bits UI. صفحهٔ اصلی نمایشی در `/`؛ آزمون واقعی محصول با server load مستقل در `/integration-check`؛ دفتر طراحی فاز ۲ بدون تغییر در `/design-system`.
 - `wordpress/plugins/inkora-core`: منبع افزونه اختصاصی. هسته WordPress و WooCommerce دست‌نخورده می‌مانند.
 - `runtime/wordpress`: مسیر صریح سایت جدید LocalWP با نام Inkora Tattoo و دامنه پیشنهادی inkora-tattoo.local. کل این پوشه از Git خارج است: هسته، uploads، تنظیمات، دیتابیس و لاگ‌ها.
 - `docs` و `scripts`: مستندات مشترک و ابزارهای موردنیاز فعلی.
@@ -14,6 +14,8 @@
 پوشه packages، Docker، Redis، UI library اختصاصی و اسکلت فازهای آینده تا نیاز واقعی ایجاد نمی‌شوند. API client مرکزی فعلاً در `apps/storefront/src/lib/server/commerce.ts` است و در صورت داشتن مصرف‌کننده دوم قابل استخراج است.
 
 ## جریان داده
+
+Home فقط دادهٔ نمایشی typeدار محلی در `src/lib/components/home/data.ts` دارد و هیچ API فروش، فرم ارسال اطلاعات یا نتیجهٔ توصیه تولید نمی‌کند. `Media.svelte` composition موقت CSS با شناسهٔ دارایی و توضیح دسترس‌پذیر می‌سازد. `FutureButton.svelte` فقط پیام زندهٔ محلی نشان می‌دهد. CSS خانه زیر `.inkora-home` و کلاس‌های اجزای آن است و توکن‌های فاز ۲ را تغییر نمی‌دهد. تمام دادهٔ محصول و تبدیل پول در route تشخیصی باقی مانده است.
 
 مرورگر ← بارگذاری سروری SvelteKit ← WooCommerce Store API ← محصول منتشرشده در دیتابیس WordPress.
 

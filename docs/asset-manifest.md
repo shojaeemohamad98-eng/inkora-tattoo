@@ -42,6 +42,14 @@
 
 ## ساختار و تحویل دارایی نهایی
 
+### افزودهٔ فاز ۳ — 2026-09-27
+
+`home-css-placeholder`: گرافیک‌های انتزاعی دستگاه/بطری/کاغذ/خط در `apps/storefront/src/lib/components/home/Media.svelte` و `home.css` به کمک CSS خود پروژه ساخته شده‌اند. منبع: کدنویسی همین پروژه؛ sourceUrl/licenseUrl/attribution خارجی ندارد؛ فایل raster و checksum موضوعیت ندارد. اندازه تابع container با قاب ثابت است. `temporary=true` و `data-asset-id=home-css-placeholder` روی media ثبت شده و داده‌های مرکزی هم assetId/temporary دارند. این‌ها عکس محصول، نمونهٔ اثر هنرمند، طرح قابل اجرا یا خروجی شبیه‌ساز نیستند. alt معنایی با `role=img` و `aria-label` صریح است. مالک جایگزینی: برند Inkora؛ باید عکس مجاز مناسب هر بخش دریافت و در manifest ثبت شود.
+
+نشان نوشتاری و فونت محلی قبلی بدون تغییر مصرف شدند. هیچ stock دانلود یا hotlink نشده، مرجع جمجمه بازتولید نشده و هیچ فایل شخصی جدید به مسیر عمومی وارد نشده است. مرجع داخلی قبلی فقط در preview فاز ۲ باقی است؛ محدودیت انتشار عمومی آن همچنان برقرار است.
+
+تصاویر `docs/assets/qa/phase-03-*.png` ثبت محلی مرورگر از همین UI هستند؛ دارایی production نیستند و از مسیر static سرو نمی‌شوند.
+
 ```text
 docs/assets/reference/            # برش مرجع برند، نه دارایی تولید
 apps/storefront/static/assets/

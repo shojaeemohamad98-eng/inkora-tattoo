@@ -18,7 +18,7 @@ assert.equal(products.length, 1, 'Exactly one published test product must exist'
 const product = products[0];
 assert.equal(product.slug, slug);
 assert.equal(toToman(product.prices), 125000, 'Test price must be 125,000 toman');
-const page = await fetch('http://127.0.0.1:5173/', { signal: AbortSignal.timeout(15000) });
+const page = await fetch('http://127.0.0.1:5173/integration-check', { signal: AbortSignal.timeout(15000) });
 assert.equal(page.status, 200);
 const html = await page.text();
 const escapedName = product.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');

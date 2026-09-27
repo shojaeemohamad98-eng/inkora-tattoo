@@ -11,7 +11,7 @@
 <svelte:window onkeydown={(event) => { if (event.key === 'Escape' && open) close(); }} />
 <header class="home-header">
   <div class="home-container header-main">
-    <a class="home-brand" href="/" aria-label="اینکورا — صفحه اصلی" aria-current="page">
+    <a class="home-brand" href="/" aria-label="اینکورا — صفحه اصلی">
       <img src="/assets/brand/inkora-wordmark-temporary.svg" width="164" height="52" alt="اینکورا؛ نوشتار موقت برند" />
       <span>نشان نوشتاری موقت</span>
     </a>

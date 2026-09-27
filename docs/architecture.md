@@ -25,6 +25,8 @@ Home فقط دادهٔ نمایشی typeدار محلی در `src/lib/components
 
 فاز ۶ workflow محتوای AI-assisted را در خود WordPress نگه می‌دارد: نوشتهٔ دارای meta `AI-assisted` پیش از تصمیم انسانی `approved` نمی‌تواند منتشر شود. endpoint محدود `inkora/v1/journal` فقط دادهٔ public و کمینهٔ مقاله‌های published+approved را بازمی‌گرداند؛ `getReviewedJournalArticles` در کلاینت مرکزی تنها مصرف‌کنندهٔ frontend است. کلید، prompt، متن تولیدی خصوصی، یادداشت بازبین و خروجی سرویس AI در repo یا API عمومی وجود ندارد.
 
+فاز ۷ صفحات ویژه را در `src/lib/components/experiences` به‌صورت data-driven نگه می‌دارد؛ هر route تنها بارگذار server و کامپوننت مشترک است. `src/lib/server/experiences.ts` از کلاینت مرکزی فروش استفاده می‌کند و با `eligibleExperienceProducts` فقط محصولات واقعی و موجودِ دارای گروه smart یا دستهٔ قابل‌تشخیص را عبور می‌دهد. visualهای CSS محلی progressive enhancement هستند؛ خواندن محتوا و navigation به hover، mouse، WebGL یا انیمیشن وابسته نیست.
+
 inkora-core یک endpoint عمومی کم‌اطلاعات `/wp-json/inkora/v1/health` دارد. ابزار ساخت محصول فقط در محیط local و برای مدیر دارای manage_woocommerce با nonce قابل استفاده است؛ روی فعال‌سازی خودکار داده نمی‌سازد. محصول آزمایشی ناموجود است تا قابل خرید نباشد. گزینه مخفی‌کردن محصولات ناموجود باید برای این آزمون خاموش باشد.
 
 ## محتوا و پول

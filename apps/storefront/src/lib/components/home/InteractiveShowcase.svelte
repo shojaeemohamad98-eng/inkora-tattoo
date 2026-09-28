@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Icon from './Icon.svelte';
+  import { trustNotes } from './data';
   type Product = { id: string; title: string; english: string; image: string; price: number; weight: string; use: string; href: string };
   type CompareModel = Product & { category: string; stroke: string; voltage: string; speed: string };
   const products: Product[] = [
@@ -40,6 +42,11 @@
     { ...products[2], id: 'ink-color', category: 'ink', title: 'ست رنگی ۵ عددی', price: 3900000, weight: '۵ × ۳۰ میل', use: 'رئالیسم رنگی', stroke: 'قابل ترکیب', voltage: 'وگان', speed: 'پک رنگ' }
   ];
   const compareCategories = [{ id: 'machine', name: 'دستگاه‌ها' }, { id: 'needle', name: 'سوزن‌ها' }, { id: 'ink', name: 'رنگ‌ها' }];
+  const kits = [
+    { name: 'کیت حرفه‌ای کامل', detail: 'دستگاه، سوزن، رنگ و ملزومات', price: 24900000, image: '/assets/products/starter-kit-v1.jpg' },
+    { name: 'کیت استودیو رنگی', detail: 'پالت رنگ، کاپ و کارتریج منتخب', price: 11800000, image: '/assets/products/tattoo-inks-v1.jpg' },
+    { name: 'کیت شروع مطمئن', detail: 'اقلام ضروری برای تمرین و شروع کار', price: 8900000, image: '/assets/products/accessories-v1.jpg' }
+  ];
 
   let rail: HTMLDivElement;
   let stage: HTMLDivElement;
@@ -63,15 +70,16 @@
   let leftId = $state('pen-pro');
   let rightId = $state('rotary-air');
   let compareOpen = $state(false);
+  let selectedKit = $state(0);
   let quoteSize = $state(14);
   let quoteDetail = $state(2);
   let quoteColor = $state('رنگی');
-  let hourlyRate = $state(1500000);
-  let needleTask = $state('لاین ظریف');
-  let skinTechnique = $state('کنترل بالا');
-  let weeklySessions = $state(8);
-  let cartridgeStock = $state(36);
-  let gloveStock = $state(90);
+  let photoBrightness = $state(105);
+  let photoContrast = $state(112);
+  let photoSaturation = $state(108);
+  let briefStyle = $state('رئالیسم رنگی');
+  let briefPlacement = $state('ساعد');
+  let sessionMinutes = $state(180);
 
   const formatPrice = (value: number) => new Intl.NumberFormat('fa-IR').format(value) + ' تومان';
   const modelsForCategory = () => compareModels.filter((model) => model.category === compareCategory);
@@ -104,9 +112,9 @@
   const endDrag = () => dragStart = null;
   const changeCategory = () => { const models = modelsForCategory(); leftId = models[0].id; rightId = models[1]?.id ?? models[0].id; };
   const quoteHours = () => Math.max(1, Math.ceil((quoteSize / 7) * quoteDetail * (quoteColor === 'رنگی' ? 1.25 : 1)));
-  const quotePrice = () => quoteHours() * hourlyRate;
-  const needleRecommendation = () => { const recommendations: Record<string, string> = { 'لاین ظریف': '3RL یا 5RL · قطر ۰.۲۵ تا ۰.۳۰', 'لاین ضخیم': '9RL یا 11RL · قطر ۰.۳۵', 'سایه نرم': '9RM یا 13RM · مگنوم خمیده', 'پک رنگ': '11M1 یا 15M1 · مگنوم مستقیم' }; return `${recommendations[needleTask]} · ${skinTechnique}`; };
-  const stockDays = () => Math.floor(Math.min(cartridgeStock / Math.max(1, weeklySessions * 1.5), gloveStock / Math.max(1, weeklySessions * 3)) * 7);
+  const quotePrice = () => Math.round((900000 + quoteSize * 185000 * quoteDetail * (quoteColor === 'رنگی' ? 1.22 : 1)) / 100000) * 100000;
+  const sessionBlocks = () => Math.max(1, Math.ceil(sessionMinutes / 75));
+  const breakMinutes = () => Math.max(10, (sessionBlocks() - 1) * 12);
 </script>
 
 <svelte:window onkeydown={(event) => { if (event.key === 'Escape') compareOpen = false; }} />
@@ -115,6 +123,7 @@
   <div class="section-title-row"><div><span>محصولات منتخب</span><h2 id="catalog-title">تجهیزات مورد نیاز استودیو</h2></div><div class="rail-actions"><button aria-label="قبلی" onclick={() => rail.scrollBy({ left: 310, behavior: 'smooth' })}>→</button><button aria-label="بعدی" onclick={() => rail.scrollBy({ left: -310, behavior: 'smooth' })}>←</button></div></div>
   <div class="product-rail" bind:this={rail}>{#each products as product}<a class="glass-product" href={product.href}><img src={product.image} alt={`تصویر نمونهٔ ${product.title}`} /><div><span>{product.english}</span><h3>{product.title}</h3><small>مشاهده دسته‌بندی ←</small></div></a>{/each}</div>
 </section>
+<div class="trust-strip">{#each trustNotes as note}<div><Icon name={note.icon} /><p><strong>{note.title}</strong><span>{note.text}</span></p></div>{/each}</div>
 
 <section class="interactive-grid" aria-label="ابزارهای تعاملی انتخاب تتو">
   <article class="glass-panel color-lab">
@@ -135,14 +144,14 @@
 </section>
 
 <section class="commerce-grid">
-  <article class="glass-panel kits-showcase"><div class="panel-heading"><span>INKORA KITS</span><h2>کیت‌های آمادهٔ اینکورا</h2><p>ترکیب‌های پیشنهادی برای شروع سریع‌تر.</p></div><div class="kit-feature"><img src="/assets/products/starter-kit-v1.jpg" alt="نمونه کیت کامل تتو" /><div><b>کیت حرفه‌ای کامل</b><span>دستگاه، سوزن، رنگ و ملزومات</span><strong>۲۴٬۹۰۰٬۰۰۰ تومان</strong><a href="/shop">مشاهده جزئیات ←</a></div></div><div class="mini-kits"><span>کیت لاین و شید</span><span>کیت رنگی</span><span>کیت شروع</span></div></article>
+  <article class="glass-panel kits-showcase"><div class="panel-heading"><span>INKORA KITS</span><h2>گالری کیت‌های پیشنهادی</h2><p>برای نوع کار و بودجهٔ متفاوت، یک ترکیب آماده انتخاب کن.</p></div><div class="kit-feature"><img src={kits[selectedKit].image} alt={kits[selectedKit].name} /><div><b>{kits[selectedKit].name}</b><span>{kits[selectedKit].detail}</span><strong>{formatPrice(kits[selectedKit].price)}</strong><a href="/shop">مشاهده جزئیات ←</a></div></div><div class="kit-gallery" aria-label="انتخاب کیت">{#each kits as kit, index}<button class:active={selectedKit === index} onclick={() => selectedKit = index}><img src={kit.image} alt="" /><span>{kit.name}</span></button>{/each}</div></article>
   <article class="glass-panel compare-panel"><div class="panel-heading"><span>COMPARE</span><h2>مقایسهٔ هم‌دستهٔ محصولات</h2><p>اول دسته را انتخاب کن، سپس دو مدل دقیق را کنار هم بسنج.</p></div><label class="compare-category">دسته محصول<select bind:value={compareCategory} onchange={changeCategory}>{#each compareCategories as category}<option value={category.id}>{category.name}</option>{/each}</select></label><div class="compare-selects"><select bind:value={leftId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select><b>VS</b><select bind:value={rightId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select></div><div class="compare-cards">{#each [selectedModel(leftId), selectedModel(rightId)] as model}<div><img src={model.image} alt={model.title} /><h3>{model.title}</h3><strong>{formatPrice(model.price)}</strong><span>{model.weight}</span><span>{model.use}</span></div>{/each}</div><button class="compare-open" onclick={() => compareOpen = true}>نمایش مقایسهٔ کامل مشخصات</button></article>
 </section>
 
-<section class="quote-calculator glass-panel" aria-labelledby="quote-title"><div class="quote-copy"><span>PROJECT QUOTE</span><h2 id="quote-title">برآورد زمان و قیمت پروژه</h2><p>یک تخمین اولیه برای پاسخ سریع به مشتری؛ قیمت نهایی بعد از مشاوره و بررسی پوست تعیین می‌شود.</p><div class="quote-fields"><label>اندازه تقریبی <b>{quoteSize} سانتی‌متر</b><input type="range" min="4" max="35" bind:value={quoteSize} /></label><label>جزئیات<select bind:value={quoteDetail}><option value={1}>ساده</option><option value={2}>متوسط</option><option value={3}>پر جزئیات</option></select></label><label>نوع اجرا<select bind:value={quoteColor}><option>مشکی و خاکستری</option><option>رنگی</option></select></label><label>تعرفه ساعتی<select bind:value={hourlyRate}><option value={1000000}>۱ میلیون</option><option value={1500000}>۱.۵ میلیون</option><option value={2000000}>۲ میلیون</option></select></label></div></div><div class="quote-result"><small>تخمین پروژه</small><b>{quoteHours()} ساعت کار</b><strong>{formatPrice(quotePrice())}</strong><p>پیشنهاد: {quoteHours() > 5 ? 'تقسیم به دو جلسه برای کیفیت و استراحت پوست' : 'قابل انجام در یک جلسه با زمان استراحت'}</p></div></section>
+<section class="quote-calculator glass-panel" aria-labelledby="quote-title"><div class="quote-copy"><span>PROJECT QUOTE</span><h2 id="quote-title">برآورد زمان و قیمت پروژه</h2><p>تخمین بر اساس اندازه، تراکم جزئیات و رنگی‌بودن طرح محاسبه می‌شود؛ مبلغ نهایی بعد از بررسی طرح و پوست تعیین می‌شود.</p><div class="quote-fields"><label>اندازه تقریبی <b>{quoteSize} سانتی‌متر</b><input type="range" min="4" max="35" bind:value={quoteSize} /></label><label>جزئیات<select bind:value={quoteDetail}><option value={1}>ساده</option><option value={2}>متوسط</option><option value={3}>پر جزئیات</option></select></label><label>نوع اجرا<select bind:value={quoteColor}><option>مشکی و خاکستری</option><option>رنگی</option></select></label></div></div><div class="quote-result"><small>تخمین پروژه</small><b>{quoteHours()} ساعت کار</b><strong>{formatPrice(quotePrice())}</strong><p>پیشنهاد: {quoteHours() > 5 ? 'تقسیم به دو جلسه برای کیفیت و استراحت پوست' : 'قابل انجام در یک جلسه با زمان استراحت'}</p></div></section>
 
-<section class="content-grid"><article class="glass-panel care-story"><img src="/assets/products/aftercare-v1.jpg" alt="محصولات مراقبت از تتو" /><div><span>راهنمای نگهداری</span><h2>سه روز اول، مهم‌ترین بخش ترمیم</h2><p>شست‌وشوی ملایم، لایهٔ نازک بالم و دوری از نور مستقیم؛ راهنمای کامل پس از بازبینی تخصصی منتشر می‌شود.</p><a href="/aftercare">مطالعه راهنما ←</a></div></article><article class="glass-panel trend-card"><span>پالت‌های محبوب</span><h2>رنگ‌های ترند استودیو</h2><div class="trend-orbs"><i style="--c:#7a101b"></i><i style="--c:#cc2738"></i><i style="--c:#d6861f"></i><i style="--c:#167d8e"></i><i style="--c:#202f58"></i><i style="--c:#d7c7af"></i></div><p>روی پالت‌ساز بالا امتحانشان کن و ترکیب شخصی خودت را بساز.</p><a href="/inks">دیدن رنگ‌ها ←</a></article><article class="glass-panel article-teaser"><span>مجله اینکورا</span><h2>چطور دستگاه مناسب دستمان را انتخاب کنیم؟</h2><p>وزن، طول کورس و فرم گریپ سه عامل اصلی در انتخاب دستگاه هستند.</p><a href="/journal">مشاهده مقاله‌ها ←</a></article></section>
+<section class="content-grid"><article class="glass-panel editorial-card care-article"><span>راهنمای نگهداری</span><h2>سه روز اول، مهم‌ترین بخش ترمیم</h2><p>شست‌وشوی ملایم، لایهٔ نازک بالم و دوری از نور مستقیم؛ راهنمای کامل ترمیم.</p><a href="/aftercare">مطالعه راهنما ←</a></article><article class="glass-panel editorial-card color-article"><span>پالت‌های محبوب</span><h2>رنگ‌های ترند استودیو</h2><p>ترکیب‌های رنگی تازه را ببین و پالت مناسب پروژهٔ بعدی را پیدا کن.</p><a href="/inks">دیدن رنگ‌ها ←</a></article><article class="glass-panel editorial-card machine-article"><span>مجله اینکورا</span><h2>چطور دستگاه مناسب دستمان را انتخاب کنیم؟</h2><p>وزن، طول کورس و فرم گریپ؛ سه عامل اصلی برای انتخاب دقیق دستگاه.</p><a href="/journal">مشاهده مقاله‌ها ←</a></article></section>
 
-<section class="idea-grid" aria-label="ابزارهای ویژه تتو آرتیست"><article class="glass-panel needle-selector"><div class="panel-heading"><span>NEEDLE SELECTOR</span><h2>انتخاب‌گر حرفه‌ای کارتریج</h2><p>بر اساس اجرای امروز، گروه و قطر مناسب را سریع پیدا کن.</p></div><div class="tool-fields"><label>نوع اجرا<select bind:value={needleTask}><option>لاین ظریف</option><option>لاین ضخیم</option><option>سایه نرم</option><option>پک رنگ</option></select></label><label>اولویت دست<select bind:value={skinTechnique}><option>کنترل بالا</option><option>سرعت بیشتر</option><option>آسیب کمتر</option></select></label></div><div class="tool-result"><small>پیشنهاد شروع</small><strong>{needleRecommendation()}</strong><span>قبل از کار روی پوست مصنوعی و طبق دستور سازنده تست شود.</span></div></article><article class="glass-panel stock-planner"><div class="panel-heading"><span>STUDIO STOCK</span><h2>هشدار موجودی مصرفی</h2><p>ببین موجودی فعلی برای چند روز کاری کافی است و چه زمانی باید سفارش بدهی.</p></div><label>جلسه در هفته: <b>{weeklySessions}</b><input type="range" min="1" max="25" bind:value={weeklySessions} /></label><label>کارتریج موجود: <b>{cartridgeStock}</b><input type="range" min="0" max="150" bind:value={cartridgeStock} /></label><label>جفت دستکش موجود: <b>{gloveStock}</b><input type="range" min="0" max="250" bind:value={gloveStock} /></label><div class="stock-result" class:urgent={stockDays() < 14}><small>پوشش موجودی</small><strong>{stockDays()} روز</strong><span>{stockDays() < 14 ? 'زمان سفارش مجدد رسیده است' : 'موجودی برای دو هفته یا بیشتر کافی است'}</span></div></article></section>
+<section class="idea-grid" aria-label="ابزارهای ویژه تتو آرتیست"><article class="glass-panel photo-lab"><div class="panel-heading"><span>PORTFOLIO PHOTO LAB</span><h2>تنظیم عکس پورتفولیو</h2><p>نور، کنتراست و رنگ عکس تتو را پیش از انتشار بررسی کن.</p></div><div class="photo-preview"><img src="/assets/body-areas/upper-arm.jpg" alt="نمونه عکس پورتفولیو" style={`filter:brightness(${photoBrightness}%) contrast(${photoContrast}%) saturate(${photoSaturation}%)`} /></div><div class="photo-controls"><label>نور <b>{photoBrightness}%</b><input type="range" min="70" max="140" bind:value={photoBrightness} /></label><label>کنتراست <b>{photoContrast}%</b><input type="range" min="70" max="150" bind:value={photoContrast} /></label><label>رنگ <b>{photoSaturation}%</b><input type="range" min="60" max="160" bind:value={photoSaturation} /></label></div></article><article class="glass-panel session-brief"><div class="panel-heading"><span>SESSION PLANNER</span><h2>برنامه‌ریز جلسهٔ تتو</h2><p>زمان کار، استراحت و ترتیب اجرای پروژه را قبل از جلسه مشخص کن.</p></div><div class="tool-fields"><label>سبک<select bind:value={briefStyle}><option>رئالیسم رنگی</option><option>بلک‌ورک</option><option>فاین‌لاین</option><option>ژاپنی</option></select></label><label>محل اجرا<select bind:value={briefPlacement}><option>ساعد</option><option>بازو و شانه</option><option>ساق پا</option><option>پشت</option></select></label></div><label class="session-length">زمان کل: <b>{sessionMinutes} دقیقه</b><input type="range" min="60" max="480" step="30" bind:value={sessionMinutes} /></label><div class="session-result"><small>برنامهٔ پیشنهادی</small><strong>{sessionBlocks()} بخش کاری · {breakMinutes()} دقیقه استراحت</strong><span>{briefStyle} روی {briefPlacement}؛ شروع با انتقال طرح، سپس اجرای مرحله‌ای و ثبت عکس نهایی.</span></div></article></section>
 
 {#if compareOpen}<div class="compare-modal-backdrop"><dialog open class="compare-modal" aria-labelledby="compare-modal-title"><button class="modal-close" aria-label="بستن" onclick={() => compareOpen = false}>×</button><span>مقایسهٔ تخصصی {compareCategories.find((item) => item.id === compareCategory)?.name}</span><h2 id="compare-modal-title">{selectedModel(leftId).title} در برابر {selectedModel(rightId).title}</h2><div class="spec-table"><b>مشخصه</b><b>{selectedModel(leftId).title}</b><b>{selectedModel(rightId).title}</b>{#each [['قیمت', formatPrice(selectedModel(leftId).price), formatPrice(selectedModel(rightId).price)], ['وزن/بسته', selectedModel(leftId).weight, selectedModel(rightId).weight], ['کاربرد', selectedModel(leftId).use, selectedModel(rightId).use], ['کورس/نوع', selectedModel(leftId).stroke, selectedModel(rightId).stroke], ['ولتاژ/ساختار', selectedModel(leftId).voltage, selectedModel(rightId).voltage], ['سرعت/ویژگی', selectedModel(leftId).speed, selectedModel(rightId).speed]] as row}<span>{row[0]}</span><span>{row[1]}</span><span>{row[2]}</span>{/each}</div></dialog></div>{/if}

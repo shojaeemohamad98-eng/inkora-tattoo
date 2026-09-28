@@ -25,8 +25,11 @@
     { name: 'اورنامنتال', image: '/assets/tattoo-designs/ornamental.svg' },
     { name: 'نشان ببر', image: '/assets/tattoo-designs/tiger-mark.svg' }
   ];
-  const bodyPositions: Record<string, { x: number; y: number }> = {
-    'ساعد بیرونی': { x: 53, y: 49 }, 'ساعد داخلی': { x: 47, y: 54 }, 'نزدیک مچ': { x: 64, y: 60 }
+  const bodyAreas: Record<string, { image: string; x: number; y: number; size: number }> = {
+    'مچ و ساعد داخلی': { image: '/assets/body-areas/wrist.jpg', x: 50, y: 43, size: 27 },
+    'ساعد بیرونی': { image: '/assets/body-areas/forearm.jpg', x: 52, y: 50, size: 38 },
+    'بازو و شانه': { image: '/assets/body-areas/upper-arm.jpg', x: 50, y: 45, size: 44 },
+    'ساق پا': { image: '/assets/body-areas/calf.jpg', x: 50, y: 48, size: 40 }
   };
   const compareModels: CompareModel[] = [
     { ...products[0], id: 'pen-pro', category: 'machine', title: 'Pen Pro X', stroke: '۴.۰ میلی‌متر', voltage: '۶–۹ ولت', speed: '۱۱۰۰۰ دور' },
@@ -51,7 +54,7 @@
   let tattooOpacity = $state(72);
   let tattooX = $state(50);
   let tattooY = $state(52);
-  let bodyArea = $state('ساعد بیرونی');
+  let bodyArea = $state('مچ و ساعد داخلی');
   let tattooPrompt = $state('گل و پلنگ رئالیسم');
   let selectedTattoo = $state(0);
   let suggestionsReady = $state(false);
@@ -60,15 +63,15 @@
   let leftId = $state('pen-pro');
   let rightId = $state('rotary-air');
   let compareOpen = $state(false);
-  let signatureMood = $state('جسور');
-  let signatureSubject = $state('طبیعت');
-  let signatureDetail = $state('پر جزئیات');
-  let signatureReady = $state(false);
-  let stencilWidth = $state(12);
-  let stencilHeight = $state(18);
-  let stencilComplexity = $state(2);
-  let machineTechnique = $state('لاین');
-  let skinType = $state('معمولی');
+  let quoteSize = $state(14);
+  let quoteDetail = $state(2);
+  let quoteColor = $state('رنگی');
+  let hourlyRate = $state(1500000);
+  let needleTask = $state('لاین ظریف');
+  let skinTechnique = $state('کنترل بالا');
+  let weeklySessions = $state(8);
+  let cartridgeStock = $state(36);
+  let gloveStock = $state(90);
 
   const formatPrice = (value: number) => new Intl.NumberFormat('fa-IR').format(value) + ' تومان';
   const modelsForCategory = () => compareModels.filter((model) => model.category === compareCategory);
@@ -94,12 +97,16 @@
     if (uploadedDesign) URL.revokeObjectURL(uploadedDesign);
     uploadedDesign = URL.createObjectURL(file); simulatorMode = 'upload';
   };
-  const generateTattooSuggestions = () => { suggestionsReady = true; const position = bodyPositions[bodyArea]; tattooX = position.x; tattooY = position.y; };
+  const changeBodyArea = () => { const area = bodyAreas[bodyArea]; tattooX = area.x; tattooY = area.y; tattooSize = area.size; };
+  const generateTattooSuggestions = () => { suggestionsReady = true; changeBodyArea(); };
   const startDrag = (event: PointerEvent) => { if (!currentTattoo()) return; (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId); dragStart = { clientX: event.clientX, clientY: event.clientY, x: tattooX, y: tattooY }; };
   const dragTattoo = (event: PointerEvent) => { if (!dragStart || !stage) return; const rect = stage.getBoundingClientRect(); tattooX = Math.max(8, Math.min(92, dragStart.x + ((event.clientX - dragStart.clientX) / rect.width) * 100)); tattooY = Math.max(10, Math.min(90, dragStart.y + ((event.clientY - dragStart.clientY) / rect.height) * 100)); };
   const endDrag = () => dragStart = null;
   const changeCategory = () => { const models = modelsForCategory(); leftId = models[0].id; rightId = models[1]?.id ?? models[0].id; };
-  const voltageGuide = () => { const guides: Record<string, string> = { 'لاین': '۷.۰ تا ۸.۵ ولت · کورس ۳.۵–۴.۰', 'سایه نرم': '۵.۵ تا ۷.۰ ولت · کورس ۳.۰–۳.۵', 'پک رنگ': '۶.۵ تا ۸.۰ ولت · کورس ۳.۵–۴.۲' }; return `${guides[machineTechnique]} · پوست ${skinType}`; };
+  const quoteHours = () => Math.max(1, Math.ceil((quoteSize / 7) * quoteDetail * (quoteColor === 'رنگی' ? 1.25 : 1)));
+  const quotePrice = () => quoteHours() * hourlyRate;
+  const needleRecommendation = () => { const recommendations: Record<string, string> = { 'لاین ظریف': '3RL یا 5RL · قطر ۰.۲۵ تا ۰.۳۰', 'لاین ضخیم': '9RL یا 11RL · قطر ۰.۳۵', 'سایه نرم': '9RM یا 13RM · مگنوم خمیده', 'پک رنگ': '11M1 یا 15M1 · مگنوم مستقیم' }; return `${recommendations[needleTask]} · ${skinTechnique}`; };
+  const stockDays = () => Math.floor(Math.min(cartridgeStock / Math.max(1, weeklySessions * 1.5), gloveStock / Math.max(1, weeklySessions * 3)) * 7);
 </script>
 
 <svelte:window onkeydown={(event) => { if (event.key === 'Escape') compareOpen = false; }} />
@@ -115,14 +122,14 @@
     <div class="tool-tabs" role="tablist" aria-label="روش انتخاب رنگ"><button class:active={colorMode === 'manual'} onclick={() => colorMode = 'manual'}>ترکیب دستی</button><button class:active={colorMode === 'assistant'} onclick={() => colorMode = 'assistant'}>پیشنهاد هوشمند</button></div>
     {#if colorMode === 'assistant'}<div class="color-search"><input bind:value={colorQuery} placeholder="مثلاً زرشکی عمیق یا سبز زیتونی" aria-label="رنگ دلخواه" /><button onclick={suggestColor}>پیدا کردن فرمول</button></div>{/if}
     <div class="mix-workspace"><div class="mix-surface"><div class="paint-puddle" style={`--mixed:${displayedColor()}`}></div><div class="mix-readout"><b>{recipeName}</b><small>{displayedColor()} · {chosenColors.length} پیگمنت</small></div></div><div class="pigments">{#each pigments as pigment}<button class:active={chosenColors.includes(pigment.hex)} style={`--pigment:${pigment.hex}`} onclick={() => togglePigment(pigment.hex)} aria-pressed={chosenColors.includes(pigment.hex)}><i></i><span>{pigment.name}</span></button>{/each}</div></div>
-    <div class="needle-result"><span>فرمول پیشنهادی</span><strong>{chosenColors.length > 2 ? 'لایه‌گذاری روشن به تیره · Magnum 9M' : 'ترکیب کنترل‌شده · Round Shader 7RS'}</strong></div>
   </article>
 
   <article class="glass-panel simulator-lab">
     <div class="panel-heading"><span>SKIN PREVIEW</span><h2>شبیه‌سازی و جای‌گذاری طرح</h2><p>طرح خودت را بارگذاری کن یا بر اساس محل، اندازه و ایده چند پیشنهاد بساز.</p></div>
     <div class="tool-tabs" role="tablist" aria-label="روش انتخاب طرح"><button class:active={simulatorMode === 'upload'} onclick={() => simulatorMode = 'upload'}>۱. آپلود طرح</button><button class:active={simulatorMode === 'suggested'} onclick={() => simulatorMode = 'suggested'}>۲. طرح پیشنهادی</button></div>
-    {#if simulatorMode === 'suggested'}<div class="suggestion-form"><select bind:value={bodyArea} aria-label="محل تتو">{#each Object.keys(bodyPositions) as area}<option>{area}</option>{/each}</select><input bind:value={tattooPrompt} aria-label="ایده طرح" placeholder="ایده؛ مثلاً گل رئالیسم" /><button onclick={generateTattooSuggestions}>ساخت ۳ پیشنهاد</button></div>{#if suggestionsReady}<div class="tattoo-suggestions">{#each tattooSuggestions as suggestion, index}<button class:active={selectedTattoo === index} onclick={() => selectedTattoo = index}><img src={suggestion.image} alt="" /><span>{suggestion.name}</span></button>{/each}</div>{/if}{/if}
-    <div class="skin-preview" bind:this={stage}><img class="arm-image" src="/assets/products/simulator-arm-v1.jpg" alt="بازو برای پیش‌نمایش طرح" />{#if currentTattoo()}<img class="tattoo-overlay draggable" src={currentTattoo()} alt="طرح قابل جابه‌جایی روی پوست" style={`left:${tattooX}%;top:${tattooY}%;width:${tattooSize}%;opacity:${tattooOpacity / 100}`} onpointerdown={startDrag} onpointermove={dragTattoo} onpointerup={endDrag} onpointercancel={endDrag} />{:else}<div class="upload-hint">طرح شما<br /><small>اینجا نمایش داده می‌شود</small></div>{/if}{#if currentTattoo()}<span class="drag-tip">با ماوس یا لمس جابه‌جا کن</span>{/if}</div>
+    <div class="body-area-row"><label>عضو بدن<select bind:value={bodyArea} onchange={changeBodyArea} aria-label="عضو بدن">{#each Object.keys(bodyAreas) as area}<option>{area}</option>{/each}</select></label><span>با تغییر عضو، عکس و جای اولیهٔ طرح عوض می‌شود.</span></div>
+    {#if simulatorMode === 'suggested'}<div class="suggestion-form"><input bind:value={tattooPrompt} aria-label="ایده طرح" placeholder="ایده؛ مثلاً گل رئالیسم" /><button onclick={generateTattooSuggestions}>ساخت ۳ پیشنهاد</button></div>{#if suggestionsReady}<div class="tattoo-suggestions">{#each tattooSuggestions as suggestion, index}<button class:active={selectedTattoo === index} onclick={() => selectedTattoo = index}><img src={suggestion.image} alt="" /><span>{suggestion.name}</span></button>{/each}</div>{/if}{/if}
+    <div class="skin-preview" bind:this={stage}><img class="arm-image" src={bodyAreas[bodyArea].image} alt={`پیش‌نمایش ${bodyArea}`} />{#if currentTattoo()}<img class="tattoo-overlay draggable" src={currentTattoo()} alt="طرح قابل جابه‌جایی روی پوست" style={`left:${tattooX}%;top:${tattooY}%;width:${tattooSize}%;opacity:${tattooOpacity / 100}`} onpointerdown={startDrag} onpointermove={dragTattoo} onpointerup={endDrag} onpointercancel={endDrag} />{:else}<div class="upload-hint">طرح شما<br /><small>اینجا نمایش داده می‌شود</small></div>{/if}{#if currentTattoo()}<span class="drag-tip">با ماوس یا لمس جابه‌جا کن</span>{/if}</div>
     <div class="sim-controls"><label class="upload-button">آپلود طرح<input type="file" accept="image/png,image/jpeg,image/webp" onchange={onUpload} /></label><label>اندازه <input type="range" min="18" max="72" bind:value={tattooSize} /></label><label>شفافیت <input type="range" min="25" max="100" bind:value={tattooOpacity} /></label></div><small class="privacy-note">آپلود و جابه‌جایی در همین مرورگر انجام می‌شود. پیشنهادها فعلاً نمونهٔ تعاملی‌اند.</small>
   </article>
 </section>
@@ -132,10 +139,10 @@
   <article class="glass-panel compare-panel"><div class="panel-heading"><span>COMPARE</span><h2>مقایسهٔ هم‌دستهٔ محصولات</h2><p>اول دسته را انتخاب کن، سپس دو مدل دقیق را کنار هم بسنج.</p></div><label class="compare-category">دسته محصول<select bind:value={compareCategory} onchange={changeCategory}>{#each compareCategories as category}<option value={category.id}>{category.name}</option>{/each}</select></label><div class="compare-selects"><select bind:value={leftId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select><b>VS</b><select bind:value={rightId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select></div><div class="compare-cards">{#each [selectedModel(leftId), selectedModel(rightId)] as model}<div><img src={model.image} alt={model.title} /><h3>{model.title}</h3><strong>{formatPrice(model.price)}</strong><span>{model.weight}</span><span>{model.use}</span></div>{/each}</div><button class="compare-open" onclick={() => compareOpen = true}>نمایش مقایسهٔ کامل مشخصات</button></article>
 </section>
 
-<section class="signature-finder glass-panel" aria-labelledby="signature-title"><div class="signature-copy"><span>ARTIST MAGNET</span><h2 id="signature-title">امضای هنری خودت را کشف کن</h2><p>سه انتخاب کوتاه؛ یک مسیر پیشنهادی برای سبک بصری، تمرین بعدی و ابزار مناسب.</p><div class="signature-fields"><label>حال‌وهوا<select bind:value={signatureMood}><option>جسور</option><option>مینیمال</option><option>تاریک</option></select></label><label>موضوع<select bind:value={signatureSubject}><option>طبیعت</option><option>چهره</option><option>هندسی</option></select></label><label>جزئیات<select bind:value={signatureDetail}><option>پر جزئیات</option><option>متعادل</option><option>خطی</option></select></label></div><button class="home-action primary" onclick={() => signatureReady = true}>ساخت پروفایل هنری من</button></div><div class="signature-result" class:ready={signatureReady}><small>پروفایل پیشنهادی</small><b>{signatureMood} · {signatureSubject} · {signatureDetail}</b><p>{signatureReady ? 'مسیر پیشنهادی: رئالیسم معاصر با کنتراست کنترل‌شده؛ تمرین بعدی روی پوست مصنوعی و شروع با کارتریج 7RS.' : 'انتخاب‌ها را کامل کن تا نتیجه اینجا ظاهر شود.'}</p><a href="/advisor">دیدن تجهیزات هماهنگ ←</a></div></section>
+<section class="quote-calculator glass-panel" aria-labelledby="quote-title"><div class="quote-copy"><span>PROJECT QUOTE</span><h2 id="quote-title">برآورد زمان و قیمت پروژه</h2><p>یک تخمین اولیه برای پاسخ سریع به مشتری؛ قیمت نهایی بعد از مشاوره و بررسی پوست تعیین می‌شود.</p><div class="quote-fields"><label>اندازه تقریبی <b>{quoteSize} سانتی‌متر</b><input type="range" min="4" max="35" bind:value={quoteSize} /></label><label>جزئیات<select bind:value={quoteDetail}><option value={1}>ساده</option><option value={2}>متوسط</option><option value={3}>پر جزئیات</option></select></label><label>نوع اجرا<select bind:value={quoteColor}><option>مشکی و خاکستری</option><option>رنگی</option></select></label><label>تعرفه ساعتی<select bind:value={hourlyRate}><option value={1000000}>۱ میلیون</option><option value={1500000}>۱.۵ میلیون</option><option value={2000000}>۲ میلیون</option></select></label></div></div><div class="quote-result"><small>تخمین پروژه</small><b>{quoteHours()} ساعت کار</b><strong>{formatPrice(quotePrice())}</strong><p>پیشنهاد: {quoteHours() > 5 ? 'تقسیم به دو جلسه برای کیفیت و استراحت پوست' : 'قابل انجام در یک جلسه با زمان استراحت'}</p></div></section>
 
 <section class="content-grid"><article class="glass-panel care-story"><img src="/assets/products/aftercare-v1.jpg" alt="محصولات مراقبت از تتو" /><div><span>راهنمای نگهداری</span><h2>سه روز اول، مهم‌ترین بخش ترمیم</h2><p>شست‌وشوی ملایم، لایهٔ نازک بالم و دوری از نور مستقیم؛ راهنمای کامل پس از بازبینی تخصصی منتشر می‌شود.</p><a href="/aftercare">مطالعه راهنما ←</a></div></article><article class="glass-panel trend-card"><span>پالت‌های محبوب</span><h2>رنگ‌های ترند استودیو</h2><div class="trend-orbs"><i style="--c:#7a101b"></i><i style="--c:#cc2738"></i><i style="--c:#d6861f"></i><i style="--c:#167d8e"></i><i style="--c:#202f58"></i><i style="--c:#d7c7af"></i></div><p>روی پالت‌ساز بالا امتحانشان کن و ترکیب شخصی خودت را بساز.</p><a href="/inks">دیدن رنگ‌ها ←</a></article><article class="glass-panel article-teaser"><span>مجله اینکورا</span><h2>چطور دستگاه مناسب دستمان را انتخاب کنیم؟</h2><p>وزن، طول کورس و فرم گریپ سه عامل اصلی در انتخاب دستگاه هستند.</p><a href="/journal">مشاهده مقاله‌ها ←</a></article></section>
 
-<section class="idea-grid" aria-label="ابزارهای ویژه تتو آرتیست"><article class="glass-panel stencil-calculator"><div class="panel-heading"><span>STENCIL CALCULATOR</span><h2>محاسبه‌گر اندازه و چاپ استنسیل</h2><p>ابعاد نهایی، سطح کاغذ و زمان تقریبی آماده‌سازی را قبل از چاپ ببین.</p></div><label>عرض طرح: <b>{stencilWidth} سانتی‌متر</b><input type="range" min="3" max="35" bind:value={stencilWidth} /></label><label>ارتفاع طرح: <b>{stencilHeight} سانتی‌متر</b><input type="range" min="3" max="50" bind:value={stencilHeight} /></label><label>پیچیدگی<select bind:value={stencilComplexity}><option value={1}>ساده</option><option value={2}>متوسط</option><option value={3}>پر جزئیات</option></select></label><div class="planner-result"><span>{stencilWidth * stencilHeight} cm² سطح</span><span>{Math.max(1, Math.ceil(stencilHeight / 27))} برگ A4</span><span>{Math.ceil((stencilWidth * stencilHeight * stencilComplexity) / 45)} دقیقه آماده‌سازی</span></div></article><article class="glass-panel machine-tuner"><div class="panel-heading"><span>MACHINE TUNER</span><h2>تنظیم‌یار شروع دستگاه</h2><p>برای تست اولیه روی پوست مصنوعی، بازهٔ امن شروع را بر اساس تکنیک ببین.</p></div><div class="tuner-fields"><label>تکنیک<select bind:value={machineTechnique}><option>لاین</option><option>سایه نرم</option><option>پک رنگ</option></select></label><label>نوع پوست تمرینی<select bind:value={skinType}><option>معمولی</option><option>نازک</option><option>ضخیم</option></select></label></div><div class="tuner-gauge"><i style={`--level:${machineTechnique === 'لاین' ? 78 : machineTechnique === 'پک رنگ' ? 68 : 55}%`}></i></div><strong>{voltageGuide()}</strong><p class="privacy-note">مقدار نهایی به دستگاه، دست آرتیست و دستور سازنده بستگی دارد.</p></article></section>
+<section class="idea-grid" aria-label="ابزارهای ویژه تتو آرتیست"><article class="glass-panel needle-selector"><div class="panel-heading"><span>NEEDLE SELECTOR</span><h2>انتخاب‌گر حرفه‌ای کارتریج</h2><p>بر اساس اجرای امروز، گروه و قطر مناسب را سریع پیدا کن.</p></div><div class="tool-fields"><label>نوع اجرا<select bind:value={needleTask}><option>لاین ظریف</option><option>لاین ضخیم</option><option>سایه نرم</option><option>پک رنگ</option></select></label><label>اولویت دست<select bind:value={skinTechnique}><option>کنترل بالا</option><option>سرعت بیشتر</option><option>آسیب کمتر</option></select></label></div><div class="tool-result"><small>پیشنهاد شروع</small><strong>{needleRecommendation()}</strong><span>قبل از کار روی پوست مصنوعی و طبق دستور سازنده تست شود.</span></div></article><article class="glass-panel stock-planner"><div class="panel-heading"><span>STUDIO STOCK</span><h2>هشدار موجودی مصرفی</h2><p>ببین موجودی فعلی برای چند روز کاری کافی است و چه زمانی باید سفارش بدهی.</p></div><label>جلسه در هفته: <b>{weeklySessions}</b><input type="range" min="1" max="25" bind:value={weeklySessions} /></label><label>کارتریج موجود: <b>{cartridgeStock}</b><input type="range" min="0" max="150" bind:value={cartridgeStock} /></label><label>جفت دستکش موجود: <b>{gloveStock}</b><input type="range" min="0" max="250" bind:value={gloveStock} /></label><div class="stock-result" class:urgent={stockDays() < 14}><small>پوشش موجودی</small><strong>{stockDays()} روز</strong><span>{stockDays() < 14 ? 'زمان سفارش مجدد رسیده است' : 'موجودی برای دو هفته یا بیشتر کافی است'}</span></div></article></section>
 
 {#if compareOpen}<div class="compare-modal-backdrop"><dialog open class="compare-modal" aria-labelledby="compare-modal-title"><button class="modal-close" aria-label="بستن" onclick={() => compareOpen = false}>×</button><span>مقایسهٔ تخصصی {compareCategories.find((item) => item.id === compareCategory)?.name}</span><h2 id="compare-modal-title">{selectedModel(leftId).title} در برابر {selectedModel(rightId).title}</h2><div class="spec-table"><b>مشخصه</b><b>{selectedModel(leftId).title}</b><b>{selectedModel(rightId).title}</b>{#each [['قیمت', formatPrice(selectedModel(leftId).price), formatPrice(selectedModel(rightId).price)], ['وزن/بسته', selectedModel(leftId).weight, selectedModel(rightId).weight], ['کاربرد', selectedModel(leftId).use, selectedModel(rightId).use], ['کورس/نوع', selectedModel(leftId).stroke, selectedModel(rightId).stroke], ['ولتاژ/ساختار', selectedModel(leftId).voltage, selectedModel(rightId).voltage], ['سرعت/ویژگی', selectedModel(leftId).speed, selectedModel(rightId).speed]] as row}<span>{row[0]}</span><span>{row[1]}</span><span>{row[2]}</span>{/each}</div></dialog></div>{/if}

@@ -12,8 +12,8 @@
 .home-container { width: min(calc(100% - 64px), var(--ink-container)); margin-inline: auto; }
 .home-skip { position: absolute; inset-inline-start: 20px; top: -100px; z-index: 20; background: var(--ink-surface); padding: 12px 24px; border: 1px solid var(--ink-focus); }
 .home-skip:focus { top: 12px; }
-.home-header { position: sticky; top: 8px; z-index: 30; width: min(calc(100% - 40px), 1210px); margin: 8px auto 0; border: 1px solid #ffffff20; border-radius: 16px; background: #07080c38; box-shadow: 0 10px 30px #0000002b; backdrop-filter: blur(17px) saturate(120%); transition: width var(--ink-normal), top var(--ink-normal), background var(--ink-normal), border-radius var(--ink-normal), box-shadow var(--ink-normal); }
-.home-header.scrolled { top: 5px; width: min(calc(100% - 24px), 1230px); margin-top: 0; border-radius: 14px; background: #07080c70; box-shadow: 0 8px 24px #00000057; }
+.home-header { position: sticky; top: 8px; z-index: 30; width: min(calc(100% - 40px), 1210px); margin: 8px auto 0; border: 0; background: transparent; box-shadow: none; transition: width var(--ink-normal), top var(--ink-normal); }
+.home-header.scrolled { top: 5px; width: min(calc(100% - 24px), 1230px); margin-top: 0; background: transparent; box-shadow: none; }
 .header-main { width: calc(100% - 26px); display: grid; grid-template-columns: auto minmax(170px, 250px) minmax(0, 1fr) auto; align-items: center; gap: 14px; padding-block: 5px; direction: ltr; }
 .home-brand { display: flex; align-items: center; gap: 8px; direction: ltr; }
 .home-brand img { display: block; width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 0 12px #cf334247); }
@@ -23,11 +23,11 @@
 .home-brand b { font-family: 'Segoe Script', 'Brush Script MT', cursive; font-style: italic; font-size: 1.45rem; letter-spacing: .06em; font-weight: 700; }
 .home-brand small { font-family: 'Segoe Script', 'Brush Script MT', cursive; font-style: italic; font-size: 8px; color: var(--ink-accent-text); letter-spacing: .18em; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-.header-search { width: 100%; direction: rtl; align-self: end; }
+.header-search { width: min(100%, 210px); direction: rtl; align-self: center; justify-self: center; }
 .header-search label { font-size: var(--ink-text-sm); display: block; margin-bottom: 4px; }
 .header-search label span { color: var(--ink-muted); }
 .header-search > div { position: relative; }
-.header-search input { width: 100%; height: 34px; border: 1px solid #ffffff29; border-radius: var(--ink-radius-pill); background: #08090d26; backdrop-filter: blur(8px); padding: 5px 16px 5px 38px; color: #fff; opacity: 1; font-size: .74rem; }
+.header-search input { width: 100%; height: 32px; border: 1px solid #ffffff30; border-radius: var(--ink-radius-pill); background: #08090d20; backdrop-filter: blur(7px); padding: 4px 14px 4px 36px; color: #fff; opacity: 1; font-size: .7rem; }
 .header-search svg { position: absolute; left: 12px; top: 6px; width: 19px; color: #e5e1e1; }
 .header-actions { display: flex; gap: 7px; direction: rtl; }
 .icon-button { display: grid; place-items: center; width: 42px; height: 42px; padding: 0; background: #ffffff0d; border: 1px solid #ffffff38; border-radius: 50%; color: #f8f5f1; backdrop-filter: blur(8px); transition: background var(--ink-fast), border-color var(--ink-fast), transform var(--ink-fast); text-decoration:none; }
@@ -35,14 +35,14 @@
 .header-status:empty { display: none; }
 .inkora-home .header-status { color: var(--ink-accent-text); padding-bottom: 12px; }
 .header-nav-shell { display: none; }
-.home-nav { display: flex; justify-content: flex-end; gap: 18px; align-items: center; min-height: 42px; font-size: .8rem; direction: rtl; white-space: nowrap; }
+.home-nav { display: flex; justify-content: center; gap: 18px; align-items: center; min-height: 40px; padding-inline: 14px; font-size: .78rem; direction: rtl; white-space: nowrap; border: 1px solid #ffffff1f; border-radius: 999px; background: #07080c2b; backdrop-filter: blur(12px) saturate(115%); }
 .home-nav > a { display: flex; align-items: center; min-height: 42px; border-bottom: 2px solid transparent; }
 .home-nav > a { color: #fff; transition: color var(--ink-fast), border-color var(--ink-fast); }
 .home-nav > a:hover, .home-nav > a[aria-current] { border-bottom-color: var(--ink-accent); color: #ff8a96; }
 .nav-note { margin-inline-start: auto; color: var(--ink-muted); font-size: var(--ink-text-xs); }
 .menu-toggle, .mobile-actions { display: none; }
-.home-hero { display: grid; grid-template-columns: 1.35fr .65fr; align-items: start; gap: 34px; padding-block: 42px 30px; min-height: 555px; }
-.hero-copy, .monthly { margin-top: 26px; }
+.home-hero { display: block; padding-block: 58px 34px; min-height: 545px; }
+.hero-copy { width: min(620px, 100%); margin-inline-end: auto; margin-top: 14px; }
 .inkora-home .eyebrow { color: var(--ink-accent-text); font-size: var(--ink-text-xs); font-weight: 600; margin-bottom: 8px; }
 .eyebrow[dir=ltr] { text-align: start; letter-spacing: .13em; }
 .hero-copy h1 { font-size: clamp(2.7rem, 4.6vw, 4.7rem); font-weight: 800; line-height: 1.25; margin: 12px 0 20px; text-shadow: 0 6px 32px #000; }
@@ -174,7 +174,7 @@
   .menu-toggle { display: grid; }
   .home-nav { display: none; grid-column: 1 / -1; padding-block: 10px; border-top: 1px solid #ffffff1f; }
   .home-nav.open { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .home-hero { grid-template-columns: 1.2fr 1fr; }
+  .home-hero { display: block; }
   .monthly { display: block; }
   .category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .tools-top { grid-template-columns: 1fr 1fr; }
@@ -202,7 +202,7 @@
   .mobile-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-block: 8px; }
   .nav-note { margin-inline-start: 0; padding: 8px; }
   .home-hero { grid-template-columns: 1fr; padding-top: 28px; gap: 20px; min-height: auto; }
-  .hero-copy, .monthly { margin-top: 8px; }
+  .hero-copy { margin-top: 8px; }
   .hero-copy h1 { font-size: clamp(2.5rem, 9vw, 3.75rem); }
   .monthly { display: block; }
   .monthly .home-media { height: 170px; }

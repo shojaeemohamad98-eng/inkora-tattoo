@@ -11,11 +11,5 @@
     <div class="hero-actions"><a class="home-action primary" href="/shop">ورود به فروشگاه <Icon name="arrow" /></a><FutureButton label="تماشای ویدیو" icon="play" /></div>
     <p class="fineprint">تصاویر فعلی نمونه‌اند و با محصولات واقعی فروشگاه جایگزین می‌شوند.</p>
   </div>
-  <aside class="home-card monthly">
-    <p class="eyebrow">ویترین منتخب</p><h2>پیشنهاد ماه</h2><img class="monthly-image" src="/assets/products/tattoo-inks-v1.jpg" alt="نمونه مجموعه رنگ تتو" />
-    <p>پالت رنگ حرفه‌ای<br />برای تمرین ترکیب و انتخاب.</p>
-    <span class="sample-tag">تصویر و قیمت نمونه</span>
-    <a class="home-action" href="#catalog-title">مشاهده محصولات <Icon name="arrow" /></a>
-  </aside>
 </section>
 <div class="trust-strip">{#each trustNotes as note}<div><Icon name={note.icon} /><p><strong>{note.title}</strong><span>{note.text}</span></p></div>{/each}</div>

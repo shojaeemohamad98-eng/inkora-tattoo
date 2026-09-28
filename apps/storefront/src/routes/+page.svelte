@@ -22,7 +22,7 @@
       '.glass-product',
       '.interactive-grid > article',
       '.commerce-grid > article',
-      '.signature-finder > *',
+      '.quote-calculator > *',
       '.content-grid > article',
       '.idea-grid > article',
       '.home-section .section-heading',

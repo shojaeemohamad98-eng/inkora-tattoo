@@ -1,6 +1,6 @@
 <script lang="ts">
   type Product = { id: string; title: string; english: string; image: string; price: number; weight: string; use: string; href: string };
-
+  type CompareModel = Product & { category: string; stroke: string; voltage: string; speed: string };
   const products: Product[] = [
     { id: 'machine', title: 'دستگاه تتو', english: 'WIRELESS PEN', image: '/assets/products/tattoo-machine-v1.jpg', price: 12900000, weight: '۱۸۶ گرم', use: 'لاین، شید و رنگ', href: '/machines' },
     { id: 'needle', title: 'سوزن و کارتریج', english: 'CARTRIDGES', image: '/assets/products/needle-cartridges-v1.jpg', price: 890000, weight: 'بسته ۲۰ عددی', use: 'لاین و شید', href: '/needles' },
@@ -9,124 +9,133 @@
     { id: 'aftercare', title: 'مراقبت و ترمیم', english: 'AFTERCARE', image: '/assets/products/aftercare-v1.jpg', price: 780000, weight: 'پک سه‌تکه', use: 'مراقبت پس از تتو', href: '/aftercare' },
     { id: 'accessories', title: 'اکسسوری استودیو', english: 'ACCESSORIES', image: '/assets/products/accessories-v1.jpg', price: 2200000, weight: 'پک کاربردی', use: 'تجهیز میز کار', href: '/accessories' }
   ];
-
   const pigments = [
     { name: 'قرمز', hex: '#e12839' }, { name: 'زرد', hex: '#f0ad21' }, { name: 'آبی', hex: '#168fb5' },
     { name: 'سفید', hex: '#ece9df' }, { name: 'مشکی', hex: '#111217' }, { name: 'بنفش', hex: '#713b78' }
   ];
-  const styles = [
-    { name: 'رئالیسم', en: 'REALISM', product: 'دستگاه پن + کارتریج مگنوم', image: products[0].image },
-    { name: 'فاین لاین', en: 'FINE LINE', product: 'کارتریج 3RL + جوهر مشکی', image: products[1].image },
-    { name: 'رنگی', en: 'COLOR', product: 'ست جوهر رنگی + مگنوم', image: products[2].image },
-    { name: 'استنسیل', en: 'STENCIL', product: 'پرینتر حرارتی + کاغذ انتقال', image: products[3].image },
-    { name: 'بلک‌ورک', en: 'BLACKWORK', product: 'پن قدرتمند + مشکی عمیق', image: products[0].image },
-    { name: 'ترمیم', en: 'AFTERCARE', product: 'بالم + فیلم محافظ', image: products[4].image }
+  const colorRecipes = [
+    { words: ['زرشکی', 'شرابی'], name: 'زرشکی عمیق', target: '#771b32', colors: ['#e12839', '#713b78', '#111217'] },
+    { words: ['سبز', 'زیتونی'], name: 'سبز زیتونی', target: '#65733c', colors: ['#f0ad21', '#168fb5', '#111217'] },
+    { words: ['نارنجی', 'مرجانی'], name: 'مرجانی گرم', target: '#ec6546', colors: ['#e12839', '#f0ad21', '#ece9df'] },
+    { words: ['فیروزه', 'اقیانوس'], name: 'فیروزه‌ای', target: '#159ba4', colors: ['#168fb5', '#f0ad21', '#ece9df'] },
+    { words: ['بنفش', 'یاسی'], name: 'بنفش یاسی', target: '#8d5a91', colors: ['#713b78', '#ece9df', '#e12839'] }
   ];
+  const tattooSuggestions = [
+    { name: 'رز فاین‌لاین', image: '/assets/tattoo-designs/rose-line.svg' },
+    { name: 'اورنامنتال', image: '/assets/tattoo-designs/ornamental.svg' },
+    { name: 'نشان ببر', image: '/assets/tattoo-designs/tiger-mark.svg' }
+  ];
+  const bodyPositions: Record<string, { x: number; y: number }> = {
+    'ساعد بیرونی': { x: 53, y: 49 }, 'ساعد داخلی': { x: 47, y: 54 }, 'نزدیک مچ': { x: 64, y: 60 }
+  };
+  const compareModels: CompareModel[] = [
+    { ...products[0], id: 'pen-pro', category: 'machine', title: 'Pen Pro X', stroke: '۴.۰ میلی‌متر', voltage: '۶–۹ ولت', speed: '۱۱۰۰۰ دور' },
+    { ...products[0], id: 'rotary-air', category: 'machine', title: 'Rotary Air', price: 10800000, weight: '۱۷۲ گرم', use: 'شید و رنگ', stroke: '۳.۵ میلی‌متر', voltage: '۵–۸ ولت', speed: '۹۵۰۰ دور' },
+    { ...products[1], id: 'rl3', category: 'needle', title: 'کارتریج 3RL', stroke: 'لاین ظریف', voltage: '۰.۳۰ میلی‌متر', speed: 'بسته ۲۰ عددی' },
+    { ...products[1], id: 'm1-9', category: 'needle', title: 'کارتریج 9M1', price: 980000, weight: 'بسته ۲۰ عددی', use: 'سایه و پک رنگ', stroke: 'مگنوم خمیده', voltage: '۰.۳۵ میلی‌متر', speed: 'ممبران نرم' },
+    { ...products[2], id: 'ink-black', category: 'ink', title: 'مشکی عمیق ۳۰ml', stroke: 'پیگمنت بالا', voltage: 'وگان', speed: 'لاین و بلک‌ورک' },
+    { ...products[2], id: 'ink-color', category: 'ink', title: 'ست رنگی ۵ عددی', price: 3900000, weight: '۵ × ۳۰ میل', use: 'رئالیسم رنگی', stroke: 'قابل ترکیب', voltage: 'وگان', speed: 'پک رنگ' }
+  ];
+  const compareCategories = [{ id: 'machine', name: 'دستگاه‌ها' }, { id: 'needle', name: 'سوزن‌ها' }, { id: 'ink', name: 'رنگ‌ها' }];
 
   let rail: HTMLDivElement;
+  let stage: HTMLDivElement;
   let chosenColors = $state(['#e12839', '#168fb5']);
+  let colorMode = $state<'manual' | 'assistant'>('manual');
+  let colorQuery = $state('');
+  let targetColor = $state('');
+  let recipeName = $state('ترکیب دستی');
   let uploadedDesign = $state('');
+  let simulatorMode = $state<'upload' | 'suggested'>('upload');
   let tattooSize = $state(42);
   let tattooOpacity = $state(72);
-  let leftId = $state('machine');
-  let rightId = $state('printer');
-  let activeStyle = $state(0);
-  let sessionHours = $state(3);
-  let clients = $state(4);
-  let sterileSteps = $state([false, false, false, false]);
+  let tattooX = $state(50);
+  let tattooY = $state(52);
+  let bodyArea = $state('ساعد بیرونی');
+  let tattooPrompt = $state('گل و پلنگ رئالیسم');
+  let selectedTattoo = $state(0);
+  let suggestionsReady = $state(false);
+  let dragStart: { clientX: number; clientY: number; x: number; y: number } | null = null;
+  let compareCategory = $state('machine');
+  let leftId = $state('pen-pro');
+  let rightId = $state('rotary-air');
+  let compareOpen = $state(false);
+  let signatureMood = $state('جسور');
+  let signatureSubject = $state('طبیعت');
+  let signatureDetail = $state('پر جزئیات');
+  let signatureReady = $state(false);
+  let stencilWidth = $state(12);
+  let stencilHeight = $state(18);
+  let stencilComplexity = $state(2);
+  let machineTechnique = $state('لاین');
+  let skinType = $state('معمولی');
 
   const formatPrice = (value: number) => new Intl.NumberFormat('fa-IR').format(value) + ' تومان';
-  const selected = (id: string) => products.find((product) => product.id === id) ?? products[0];
+  const modelsForCategory = () => compareModels.filter((model) => model.category === compareCategory);
+  const selectedModel = (id: string) => compareModels.find((model) => model.id === id) ?? modelsForCategory()[0];
+  const currentTattoo = () => simulatorMode === 'upload' ? uploadedDesign : (suggestionsReady ? tattooSuggestions[selectedTattoo].image : '');
   const mixHex = (colors: string[]) => {
-    if (!colors.length) return '#c52236';
+    if (!colors.length) return '#f4f1ed';
     const rgb = colors.reduce((sum, hex) => {
       const value = hex.replace('#', '');
       return [sum[0] + parseInt(value.slice(0, 2), 16), sum[1] + parseInt(value.slice(2, 4), 16), sum[2] + parseInt(value.slice(4, 6), 16)];
     }, [0, 0, 0]);
     return `rgb(${rgb.map((channel) => Math.round(channel / colors.length)).join(',')})`;
   };
-  const togglePigment = (hex: string) => chosenColors = chosenColors.includes(hex) ? chosenColors.filter((color) => color !== hex) : [...chosenColors, hex];
-  const onUpload = (event: Event) => {
-    const file = (event.currentTarget as HTMLInputElement).files?.[0];
-    if (!file) return;
-    if (uploadedDesign) URL.revokeObjectURL(uploadedDesign);
-    uploadedDesign = URL.createObjectURL(file);
+  const displayedColor = () => targetColor || mixHex(chosenColors);
+  const togglePigment = (hex: string) => { targetColor = ''; recipeName = 'ترکیب دستی'; chosenColors = chosenColors.includes(hex) ? chosenColors.filter((color) => color !== hex) : [...chosenColors, hex]; };
+  const suggestColor = () => {
+    const normalized = colorQuery.trim();
+    const recipe = colorRecipes.find((item) => item.words.some((word) => normalized.includes(word))) ?? colorRecipes[Math.abs([...normalized].reduce((sum, char) => sum + char.charCodeAt(0), 0)) % colorRecipes.length];
+    chosenColors = recipe.colors; targetColor = recipe.target; recipeName = recipe.name;
   };
+  const onUpload = (event: Event) => {
+    const file = (event.currentTarget as HTMLInputElement).files?.[0]; if (!file) return;
+    if (uploadedDesign) URL.revokeObjectURL(uploadedDesign);
+    uploadedDesign = URL.createObjectURL(file); simulatorMode = 'upload';
+  };
+  const generateTattooSuggestions = () => { suggestionsReady = true; const position = bodyPositions[bodyArea]; tattooX = position.x; tattooY = position.y; };
+  const startDrag = (event: PointerEvent) => { if (!currentTattoo()) return; (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId); dragStart = { clientX: event.clientX, clientY: event.clientY, x: tattooX, y: tattooY }; };
+  const dragTattoo = (event: PointerEvent) => { if (!dragStart || !stage) return; const rect = stage.getBoundingClientRect(); tattooX = Math.max(8, Math.min(92, dragStart.x + ((event.clientX - dragStart.clientX) / rect.width) * 100)); tattooY = Math.max(10, Math.min(90, dragStart.y + ((event.clientY - dragStart.clientY) / rect.height) * 100)); };
+  const endDrag = () => dragStart = null;
+  const changeCategory = () => { const models = modelsForCategory(); leftId = models[0].id; rightId = models[1]?.id ?? models[0].id; };
+  const voltageGuide = () => { const guides: Record<string, string> = { 'لاین': '۷.۰ تا ۸.۵ ولت · کورس ۳.۵–۴.۰', 'سایه نرم': '۵.۵ تا ۷.۰ ولت · کورس ۳.۰–۳.۵', 'پک رنگ': '۶.۵ تا ۸.۰ ولت · کورس ۳.۵–۴.۲' }; return `${guides[machineTechnique]} · پوست ${skinType}`; };
 </script>
 
+<svelte:window onkeydown={(event) => { if (event.key === 'Escape') compareOpen = false; }} />
+
 <section class="catalog-section" aria-labelledby="catalog-title">
-  <div class="section-title-row">
-    <div><span>محصولات منتخب</span><h2 id="catalog-title">تجهیزات مورد نیاز استودیو</h2></div>
-    <div class="rail-actions"><button aria-label="قبلی" onclick={() => rail.scrollBy({ left: 310, behavior: 'smooth' })}>→</button><button aria-label="بعدی" onclick={() => rail.scrollBy({ left: -310, behavior: 'smooth' })}>←</button></div>
-  </div>
-  <div class="product-rail" bind:this={rail}>
-    {#each products as product}
-      <a class="glass-product" href={product.href}>
-        <img src={product.image} alt={`تصویر نمونهٔ ${product.title}`} />
-        <div><span>{product.english}</span><h3>{product.title}</h3><small>مشاهده دسته‌بندی ←</small></div>
-      </a>
-    {/each}
-  </div>
+  <div class="section-title-row"><div><span>محصولات منتخب</span><h2 id="catalog-title">تجهیزات مورد نیاز استودیو</h2></div><div class="rail-actions"><button aria-label="قبلی" onclick={() => rail.scrollBy({ left: 310, behavior: 'smooth' })}>→</button><button aria-label="بعدی" onclick={() => rail.scrollBy({ left: -310, behavior: 'smooth' })}>←</button></div></div>
+  <div class="product-rail" bind:this={rail}>{#each products as product}<a class="glass-product" href={product.href}><img src={product.image} alt={`تصویر نمونهٔ ${product.title}`} /><div><span>{product.english}</span><h3>{product.title}</h3><small>مشاهده دسته‌بندی ←</small></div></a>{/each}</div>
 </section>
 
 <section class="interactive-grid" aria-label="ابزارهای تعاملی انتخاب تتو">
   <article class="glass-panel color-lab">
-    <div class="panel-heading"><span>INK MIX LAB</span><h2>ترکیب سوزن و رنگ مناسب</h2><p>چند رنگ را انتخاب کن تا ترکیب پیشنهادی را همان لحظه ببینی.</p></div>
-    <div class="mix-workspace">
-      <div class="mixed-color" style={`--mixed:${mixHex(chosenColors)}`}><b>رنگ ساخته‌شده</b><small>{chosenColors.length} پیگمنت فعال</small></div>
-      <div class="pigments">
-        {#each pigments as pigment}
-          <button class:active={chosenColors.includes(pigment.hex)} style={`--pigment:${pigment.hex}`} onclick={() => togglePigment(pigment.hex)} aria-pressed={chosenColors.includes(pigment.hex)}><i></i><span>{pigment.name}</span></button>
-        {/each}
-      </div>
-    </div>
-    <div class="needle-result"><span>پیشنهاد سوزن</span><strong>{chosenColors.length > 2 ? 'Magnum 9M برای پوشش و ترکیب نرم' : 'Round Shader 7RS برای کنترل بهتر'}</strong></div>
+    <div class="panel-heading"><span>INK MIX STUDIO</span><h2>آزمایشگاه واقعی ترکیب رنگ</h2><p>روی زمینهٔ روشن رنگ‌ها را دستی ترکیب کن یا نام رنگ دلخواه را به پیشنهادگر بده.</p></div>
+    <div class="tool-tabs" role="tablist" aria-label="روش انتخاب رنگ"><button class:active={colorMode === 'manual'} onclick={() => colorMode = 'manual'}>ترکیب دستی</button><button class:active={colorMode === 'assistant'} onclick={() => colorMode = 'assistant'}>پیشنهاد هوشمند</button></div>
+    {#if colorMode === 'assistant'}<div class="color-search"><input bind:value={colorQuery} placeholder="مثلاً زرشکی عمیق یا سبز زیتونی" aria-label="رنگ دلخواه" /><button onclick={suggestColor}>پیدا کردن فرمول</button></div>{/if}
+    <div class="mix-workspace"><div class="mix-surface"><div class="paint-puddle" style={`--mixed:${displayedColor()}`}></div><div class="mix-readout"><b>{recipeName}</b><small>{displayedColor()} · {chosenColors.length} پیگمنت</small></div></div><div class="pigments">{#each pigments as pigment}<button class:active={chosenColors.includes(pigment.hex)} style={`--pigment:${pigment.hex}`} onclick={() => togglePigment(pigment.hex)} aria-pressed={chosenColors.includes(pigment.hex)}><i></i><span>{pigment.name}</span></button>{/each}</div></div>
+    <div class="needle-result"><span>فرمول پیشنهادی</span><strong>{chosenColors.length > 2 ? 'لایه‌گذاری روشن به تیره · Magnum 9M' : 'ترکیب کنترل‌شده · Round Shader 7RS'}</strong></div>
   </article>
 
   <article class="glass-panel simulator-lab">
-    <div class="panel-heading"><span>SKIN PREVIEW</span><h2>شبیه‌سازی نتیجه روی پوست</h2><p>طرح خودت را فقط روی دستگاهت بارگذاری و اندازه‌اش را تنظیم کن.</p></div>
-    <div class="skin-preview">
-      <img class="arm-image" src="/assets/products/simulator-arm-v1.jpg" alt="بازوی بدون تتو برای پیش‌نمایش طرح" />
-      {#if uploadedDesign}<img class="tattoo-overlay" src={uploadedDesign} alt="پیش‌نمایش طرح بارگذاری‌شده" style={`width:${tattooSize}%;opacity:${tattooOpacity / 100}`} />{:else}<div class="upload-hint">طرح شما<br /><small>اینجا نمایش داده می‌شود</small></div>{/if}
-    </div>
-    <div class="sim-controls">
-      <label class="upload-button">آپلود طرح<input type="file" accept="image/png,image/jpeg,image/webp" onchange={onUpload} /></label>
-      <label>اندازه <input type="range" min="18" max="72" bind:value={tattooSize} /></label>
-      <label>شفافیت <input type="range" min="25" max="100" bind:value={tattooOpacity} /></label>
-    </div>
-    <small class="privacy-note">فایل از مرورگر شما خارج نمی‌شود.</small>
+    <div class="panel-heading"><span>SKIN PREVIEW</span><h2>شبیه‌سازی و جای‌گذاری طرح</h2><p>طرح خودت را بارگذاری کن یا بر اساس محل، اندازه و ایده چند پیشنهاد بساز.</p></div>
+    <div class="tool-tabs" role="tablist" aria-label="روش انتخاب طرح"><button class:active={simulatorMode === 'upload'} onclick={() => simulatorMode = 'upload'}>۱. آپلود طرح</button><button class:active={simulatorMode === 'suggested'} onclick={() => simulatorMode = 'suggested'}>۲. طرح پیشنهادی</button></div>
+    {#if simulatorMode === 'suggested'}<div class="suggestion-form"><select bind:value={bodyArea} aria-label="محل تتو">{#each Object.keys(bodyPositions) as area}<option>{area}</option>{/each}</select><input bind:value={tattooPrompt} aria-label="ایده طرح" placeholder="ایده؛ مثلاً گل رئالیسم" /><button onclick={generateTattooSuggestions}>ساخت ۳ پیشنهاد</button></div>{#if suggestionsReady}<div class="tattoo-suggestions">{#each tattooSuggestions as suggestion, index}<button class:active={selectedTattoo === index} onclick={() => selectedTattoo = index}><img src={suggestion.image} alt="" /><span>{suggestion.name}</span></button>{/each}</div>{/if}{/if}
+    <div class="skin-preview" bind:this={stage}><img class="arm-image" src="/assets/products/simulator-arm-v1.jpg" alt="بازو برای پیش‌نمایش طرح" />{#if currentTattoo()}<img class="tattoo-overlay draggable" src={currentTattoo()} alt="طرح قابل جابه‌جایی روی پوست" style={`left:${tattooX}%;top:${tattooY}%;width:${tattooSize}%;opacity:${tattooOpacity / 100}`} onpointerdown={startDrag} onpointermove={dragTattoo} onpointerup={endDrag} onpointercancel={endDrag} />{:else}<div class="upload-hint">طرح شما<br /><small>اینجا نمایش داده می‌شود</small></div>{/if}{#if currentTattoo()}<span class="drag-tip">با ماوس یا لمس جابه‌جا کن</span>{/if}</div>
+    <div class="sim-controls"><label class="upload-button">آپلود طرح<input type="file" accept="image/png,image/jpeg,image/webp" onchange={onUpload} /></label><label>اندازه <input type="range" min="18" max="72" bind:value={tattooSize} /></label><label>شفافیت <input type="range" min="25" max="100" bind:value={tattooOpacity} /></label></div><small class="privacy-note">آپلود و جابه‌جایی در همین مرورگر انجام می‌شود. پیشنهادها فعلاً نمونهٔ تعاملی‌اند.</small>
   </article>
 </section>
 
 <section class="commerce-grid">
-  <article class="glass-panel kits-showcase">
-    <div class="panel-heading"><span>INKORA KITS</span><h2>کیت‌های آمادهٔ اینکورا</h2><p>ترکیب‌های پیشنهادی برای شروع سریع‌تر.</p></div>
-    <div class="kit-feature"><img src="/assets/products/starter-kit-v1.jpg" alt="نمونه کیت کامل تتو" /><div><b>کیت حرفه‌ای کامل</b><span>دستگاه، سوزن، رنگ و ملزومات</span><strong>۲۴٬۹۰۰٬۰۰۰ تومان</strong><a href="/shop">مشاهده جزئیات ←</a></div></div>
-    <div class="mini-kits"><span>کیت لاین و شید</span><span>کیت رنگی</span><span>کیت شروع</span></div>
-  </article>
-
-  <article class="glass-panel compare-panel">
-    <div class="panel-heading"><span>COMPARE</span><h2>مقایسهٔ محصولات</h2><p>دو محصول را از نظر قیمت و مشخصات کنار هم ببین.</p></div>
-    <div class="compare-selects"><select bind:value={leftId}>{#each products as product}<option value={product.id}>{product.title}</option>{/each}</select><b>VS</b><select bind:value={rightId}>{#each products as product}<option value={product.id}>{product.title}</option>{/each}</select></div>
-    <div class="compare-cards">
-      {#each [selected(leftId), selected(rightId)] as product}<div><img src={product.image} alt={product.title} /><h3>{product.title}</h3><strong>{formatPrice(product.price)}</strong><span>{product.weight}</span><span>{product.use}</span></div>{/each}
-    </div>
-  </article>
+  <article class="glass-panel kits-showcase"><div class="panel-heading"><span>INKORA KITS</span><h2>کیت‌های آمادهٔ اینکورا</h2><p>ترکیب‌های پیشنهادی برای شروع سریع‌تر.</p></div><div class="kit-feature"><img src="/assets/products/starter-kit-v1.jpg" alt="نمونه کیت کامل تتو" /><div><b>کیت حرفه‌ای کامل</b><span>دستگاه، سوزن، رنگ و ملزومات</span><strong>۲۴٬۹۰۰٬۰۰۰ تومان</strong><a href="/shop">مشاهده جزئیات ←</a></div></div><div class="mini-kits"><span>کیت لاین و شید</span><span>کیت رنگی</span><span>کیت شروع</span></div></article>
+  <article class="glass-panel compare-panel"><div class="panel-heading"><span>COMPARE</span><h2>مقایسهٔ هم‌دستهٔ محصولات</h2><p>اول دسته را انتخاب کن، سپس دو مدل دقیق را کنار هم بسنج.</p></div><label class="compare-category">دسته محصول<select bind:value={compareCategory} onchange={changeCategory}>{#each compareCategories as category}<option value={category.id}>{category.name}</option>{/each}</select></label><div class="compare-selects"><select bind:value={leftId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select><b>VS</b><select bind:value={rightId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select></div><div class="compare-cards">{#each [selectedModel(leftId), selectedModel(rightId)] as model}<div><img src={model.image} alt={model.title} /><h3>{model.title}</h3><strong>{formatPrice(model.price)}</strong><span>{model.weight}</span><span>{model.use}</span></div>{/each}</div><button class="compare-open" onclick={() => compareOpen = true}>نمایش مقایسهٔ کامل مشخصات</button></article>
 </section>
 
-<section class="style-finder" aria-labelledby="style-title">
-  <div class="section-title-row"><div><span>سبک خودت را پیدا کن</span><h2 id="style-title">الهام بگیر و ابزار مناسب را انتخاب کن</h2></div><p>با انتخاب هر سبک، ترکیب پیشنهادی تجهیزات تغییر می‌کند.</p></div>
-  <div class="style-tabs">{#each styles as style, index}<button class:active={activeStyle === index} onclick={() => activeStyle = index}><img src={style.image} alt="" /><span>{style.name}<small>{style.en}</small></span></button>{/each}</div>
-  <div class="style-result glass-panel"><img src={styles[activeStyle].image} alt={`تجهیزات پیشنهادی سبک ${styles[activeStyle].name}`} /><div><span>پیشنهاد برای {styles[activeStyle].name}</span><h3>{styles[activeStyle].product}</h3><p>این پیشنهاد نمایشی است و پس از ثبت مشخصات واقعی محصولات دقیق‌تر می‌شود.</p><a href="/advisor">باز کردن راهنمای هوشمند ←</a></div></div>
-</section>
+<section class="signature-finder glass-panel" aria-labelledby="signature-title"><div class="signature-copy"><span>ARTIST MAGNET</span><h2 id="signature-title">امضای هنری خودت را کشف کن</h2><p>سه انتخاب کوتاه؛ یک مسیر پیشنهادی برای سبک بصری، تمرین بعدی و ابزار مناسب.</p><div class="signature-fields"><label>حال‌وهوا<select bind:value={signatureMood}><option>جسور</option><option>مینیمال</option><option>تاریک</option></select></label><label>موضوع<select bind:value={signatureSubject}><option>طبیعت</option><option>چهره</option><option>هندسی</option></select></label><label>جزئیات<select bind:value={signatureDetail}><option>پر جزئیات</option><option>متعادل</option><option>خطی</option></select></label></div><button class="home-action primary" onclick={() => signatureReady = true}>ساخت پروفایل هنری من</button></div><div class="signature-result" class:ready={signatureReady}><small>پروفایل پیشنهادی</small><b>{signatureMood} · {signatureSubject} · {signatureDetail}</b><p>{signatureReady ? 'مسیر پیشنهادی: رئالیسم معاصر با کنتراست کنترل‌شده؛ تمرین بعدی روی پوست مصنوعی و شروع با کارتریج 7RS.' : 'انتخاب‌ها را کامل کن تا نتیجه اینجا ظاهر شود.'}</p><a href="/advisor">دیدن تجهیزات هماهنگ ←</a></div></section>
 
-<section class="content-grid">
-  <article class="glass-panel care-story"><img src="/assets/products/aftercare-v1.jpg" alt="محصولات مراقبت از تتو" /><div><span>راهنمای نگهداری</span><h2>سه روز اول، مهم‌ترین بخش ترمیم</h2><p>شست‌وشوی ملایم، لایهٔ نازک بالم و دوری از نور مستقیم؛ راهنمای کامل پس از بازبینی تخصصی منتشر می‌شود.</p><a href="/aftercare">مطالعه راهنما ←</a></div></article>
-  <article class="glass-panel trend-card"><span>پالت‌های محبوب</span><h2>رنگ‌های ترند استودیو</h2><div class="trend-orbs"><i style="--c:#7a101b"></i><i style="--c:#cc2738"></i><i style="--c:#d6861f"></i><i style="--c:#167d8e"></i><i style="--c:#202f58"></i><i style="--c:#d7c7af"></i></div><p>روی پالت‌ساز بالا امتحانشان کن و ترکیب شخصی خودت را بساز.</p><a href="/inks">دیدن رنگ‌ها ←</a></article>
-  <article class="glass-panel article-teaser"><span>مجله اینکورا</span><h2>چطور دستگاه مناسب دستمان را انتخاب کنیم؟</h2><p>وزن، طول کورس و فرم گریپ سه عامل اصلی در انتخاب دستگاه هستند.</p><a href="/journal">مشاهده مقاله‌ها ←</a></article>
-</section>
+<section class="content-grid"><article class="glass-panel care-story"><img src="/assets/products/aftercare-v1.jpg" alt="محصولات مراقبت از تتو" /><div><span>راهنمای نگهداری</span><h2>سه روز اول، مهم‌ترین بخش ترمیم</h2><p>شست‌وشوی ملایم، لایهٔ نازک بالم و دوری از نور مستقیم؛ راهنمای کامل پس از بازبینی تخصصی منتشر می‌شود.</p><a href="/aftercare">مطالعه راهنما ←</a></div></article><article class="glass-panel trend-card"><span>پالت‌های محبوب</span><h2>رنگ‌های ترند استودیو</h2><div class="trend-orbs"><i style="--c:#7a101b"></i><i style="--c:#cc2738"></i><i style="--c:#d6861f"></i><i style="--c:#167d8e"></i><i style="--c:#202f58"></i><i style="--c:#d7c7af"></i></div><p>روی پالت‌ساز بالا امتحانشان کن و ترکیب شخصی خودت را بساز.</p><a href="/inks">دیدن رنگ‌ها ←</a></article><article class="glass-panel article-teaser"><span>مجله اینکورا</span><h2>چطور دستگاه مناسب دستمان را انتخاب کنیم؟</h2><p>وزن، طول کورس و فرم گریپ سه عامل اصلی در انتخاب دستگاه هستند.</p><a href="/journal">مشاهده مقاله‌ها ←</a></article></section>
 
-<section class="idea-grid" aria-label="ابزارهای ویژه اینکورا">
-  <article class="glass-panel session-planner"><div class="panel-heading"><span>ایدهٔ ویژه ۰۱</span><h2>برآوردگر مصرف جلسه</h2><p>برای برنامه‌ریزی مواد مصرفی استودیو.</p></div><label>مدت هر جلسه: <b>{sessionHours} ساعت</b><input type="range" min="1" max="8" bind:value={sessionHours} /></label><label>مراجعه در هفته: <b>{clients} نفر</b><input type="range" min="1" max="20" bind:value={clients} /></label><div class="planner-result"><span>{Math.ceil(sessionHours * clients * 1.4)} کارتریج</span><span>{clients * 3} جفت دستکش</span><span>{Math.ceil(sessionHours * clients * 2.5)} عدد کپ رنگ</span></div></article>
-  <article class="glass-panel sterile-check"><div class="panel-heading"><span>ایدهٔ ویژه ۰۲</span><h2>چک‌لیست آماده‌سازی میز</h2><p>پیش از شروع جلسه، مراحل را کامل کن.</p></div>{#each ['ضدعفونی سطح و تجهیزات', 'آماده‌سازی پوشش و دستکش', 'کنترل تاریخ سوزن و رنگ', 'چیدمان ظرف پسماند'] as step, index}<label><input type="checkbox" bind:checked={sterileSteps[index]} /><span>{step}</span></label>{/each}<div class="progress"><i style={`width:${sterileSteps.filter(Boolean).length * 25}%`}></i></div><strong>{sterileSteps.filter(Boolean).length === 4 ? 'میز آماده است ✓' : `${sterileSteps.filter(Boolean).length} از ۴ مرحله کامل شده`}</strong></article>
-</section>
+<section class="idea-grid" aria-label="ابزارهای ویژه تتو آرتیست"><article class="glass-panel stencil-calculator"><div class="panel-heading"><span>STENCIL CALCULATOR</span><h2>محاسبه‌گر اندازه و چاپ استنسیل</h2><p>ابعاد نهایی، سطح کاغذ و زمان تقریبی آماده‌سازی را قبل از چاپ ببین.</p></div><label>عرض طرح: <b>{stencilWidth} سانتی‌متر</b><input type="range" min="3" max="35" bind:value={stencilWidth} /></label><label>ارتفاع طرح: <b>{stencilHeight} سانتی‌متر</b><input type="range" min="3" max="50" bind:value={stencilHeight} /></label><label>پیچیدگی<select bind:value={stencilComplexity}><option value={1}>ساده</option><option value={2}>متوسط</option><option value={3}>پر جزئیات</option></select></label><div class="planner-result"><span>{stencilWidth * stencilHeight} cm² سطح</span><span>{Math.max(1, Math.ceil(stencilHeight / 27))} برگ A4</span><span>{Math.ceil((stencilWidth * stencilHeight * stencilComplexity) / 45)} دقیقه آماده‌سازی</span></div></article><article class="glass-panel machine-tuner"><div class="panel-heading"><span>MACHINE TUNER</span><h2>تنظیم‌یار شروع دستگاه</h2><p>برای تست اولیه روی پوست مصنوعی، بازهٔ امن شروع را بر اساس تکنیک ببین.</p></div><div class="tuner-fields"><label>تکنیک<select bind:value={machineTechnique}><option>لاین</option><option>سایه نرم</option><option>پک رنگ</option></select></label><label>نوع پوست تمرینی<select bind:value={skinType}><option>معمولی</option><option>نازک</option><option>ضخیم</option></select></label></div><div class="tuner-gauge"><i style={`--level:${machineTechnique === 'لاین' ? 78 : machineTechnique === 'پک رنگ' ? 68 : 55}%`}></i></div><strong>{voltageGuide()}</strong><p class="privacy-note">مقدار نهایی به دستگاه، دست آرتیست و دستور سازنده بستگی دارد.</p></article></section>
+
+{#if compareOpen}<div class="compare-modal-backdrop"><dialog open class="compare-modal" aria-labelledby="compare-modal-title"><button class="modal-close" aria-label="بستن" onclick={() => compareOpen = false}>×</button><span>مقایسهٔ تخصصی {compareCategories.find((item) => item.id === compareCategory)?.name}</span><h2 id="compare-modal-title">{selectedModel(leftId).title} در برابر {selectedModel(rightId).title}</h2><div class="spec-table"><b>مشخصه</b><b>{selectedModel(leftId).title}</b><b>{selectedModel(rightId).title}</b>{#each [['قیمت', formatPrice(selectedModel(leftId).price), formatPrice(selectedModel(rightId).price)], ['وزن/بسته', selectedModel(leftId).weight, selectedModel(rightId).weight], ['کاربرد', selectedModel(leftId).use, selectedModel(rightId).use], ['کورس/نوع', selectedModel(leftId).stroke, selectedModel(rightId).stroke], ['ولتاژ/ساختار', selectedModel(leftId).voltage, selectedModel(rightId).voltage], ['سرعت/ویژگی', selectedModel(leftId).speed, selectedModel(rightId).speed]] as row}<span>{row[0]}</span><span>{row[1]}</span><span>{row[2]}</span>{/each}</div></dialog></div>{/if}

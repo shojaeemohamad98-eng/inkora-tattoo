@@ -1,6 +1,6 @@
 @font-face {
-  font-family: Vazirmatn;
-  src: url('/assets/fonts/Vazirmatn-variable.woff2') format('woff2');
+  font-family: Estedad;
+  src: url('/assets/fonts/Estedad-variable.woff2') format('woff2');
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
@@ -22,8 +22,8 @@
   --ink-focus: #f0c89b;
   --ink-success: #8ce2b2;
   --ink-error: #ff9da7;
-  --ink-font: 'Segoe UI', Vazirmatn, Tahoma, Arial, sans-serif;
-  --ink-display-font: Georgia, 'Times New Roman', Vazirmatn, serif;
+  --ink-font: Estedad, Tahoma, Arial, sans-serif;
+  --ink-display-font: Estedad, Tahoma, Arial, sans-serif;
   --ink-text-xs: .75rem;
   --ink-text-sm: .875rem;
   --ink-text-base: 1rem;
@@ -48,7 +48,7 @@
   --ink-ease: cubic-bezier(.2,.7,.2,1);
   --ink-container: 1200px;
   color: var(--ink-text);
-  background: var(--ink-bg) url('/assets/visual/inkora-tattoo-artist-bg-v2.jpg') center top / cover fixed no-repeat;
+  background: var(--ink-bg) url('/assets/visual/inkora-tattoo-artist-bg-v3.jpg') center top / cover fixed no-repeat;
   font-family: var(--ink-font);
   line-height: 1.9;
   color-scheme: dark;

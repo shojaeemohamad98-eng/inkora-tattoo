@@ -42,13 +42,13 @@
   --ink-radius-card: 1rem;
   --ink-radius-pill: 999px;
   --ink-shadow: 0 16px 48px #00000040;
-  --ink-glass: linear-gradient(135deg, #ffffff09, #ffffff00), #15161bf2;
+  --ink-glass: linear-gradient(135deg, #ffffff0c, #ffffff02), #0b0d1266;
   --ink-fast: 140ms;
   --ink-normal: 220ms;
   --ink-ease: cubic-bezier(.2,.7,.2,1);
   --ink-container: 1200px;
   color: var(--ink-text);
-  background: var(--ink-bg) url('/assets/visual/inkora-tattoo-studio-background-v1.png') center top / max(1440px, 100%) auto fixed no-repeat;
+  background: var(--ink-bg) url('/assets/visual/inkora-tattoo-artist-bg-v2.jpg') center top / cover fixed no-repeat;
   font-family: var(--ink-font);
   line-height: 1.9;
   color-scheme: dark;

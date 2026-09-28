@@ -6,6 +6,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: Vazirmatn;
+  src: url('/assets/fonts/Vazirmatn-variable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 /* Opt-in theme: the phase-01 diagnostic route remains independent. */
 .inkora-theme {
   --ink-bg: #0b0c0f;
@@ -22,8 +30,8 @@
   --ink-focus: #f0c89b;
   --ink-success: #8ce2b2;
   --ink-error: #ff9da7;
-  --ink-font: Estedad, Tahoma, Arial, sans-serif;
-  --ink-display-font: Estedad, Tahoma, Arial, sans-serif;
+  --ink-font: Vazirmatn, Tahoma, Arial, sans-serif;
+  --ink-display-font: Vazirmatn, Tahoma, Arial, sans-serif;
   --ink-text-xs: .75rem;
   --ink-text-sm: .875rem;
   --ink-text-base: 1rem;

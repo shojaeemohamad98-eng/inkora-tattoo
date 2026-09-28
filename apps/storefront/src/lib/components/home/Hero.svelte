@@ -1,6 +1,7 @@
 <script lang="ts">
   import FutureButton from './FutureButton.svelte';
   import Icon from './Icon.svelte';
+  import { trustNotes } from './data';
 </script>
 <section class="home-hero" aria-labelledby="hero-title">
   <div class="hero-copy">
@@ -11,3 +12,4 @@
     <p class="fineprint">تصاویر فعلی نمونه‌اند و با محصولات واقعی فروشگاه جایگزین می‌شوند.</p>
   </div>
 </section>
+<div class="trust-strip">{#each trustNotes as note}<div><Icon name={note.icon} /><p><strong>{note.title}</strong><span>{note.text}</span></p></div>{/each}</div>

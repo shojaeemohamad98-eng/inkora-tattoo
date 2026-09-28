@@ -96,3 +96,49 @@
 .session-result small{color:#ff8996}.session-result strong{font-size:1.15rem}.session-result span{color:#aaa;font-size:.8rem}
 @media(max-width:950px){.catalog-section{margin-top:-40px}.content-grid{grid-template-columns:1fr 1fr}.editorial-card:last-child{grid-column:1/-1}.product-rail{grid-auto-columns:180px}}
 @media(max-width:600px){.catalog-section{margin-top:10px}.product-rail{grid-auto-columns:72%}.content-grid{grid-template-columns:1fr}.editorial-card:last-child{grid-column:auto}.kit-gallery,.photo-controls{grid-template-columns:1fr 1fr}.kit-gallery button:last-child{grid-column:1/-1}.editorial-card{min-height:245px}}
+
+/* Rich color mixing surface and smoother simulator controls. */
+.catalog-section{margin-top:28px}
+.mix-surface{min-height:300px;display:block;background:#0a0b0e;isolation:isolate}
+.mix-surface>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.44) saturate(1.35);opacity:.9}
+.mix-surface:before{z-index:1;background:linear-gradient(180deg,#06070a20,#06070ac9),radial-gradient(circle at 48% 45%,transparent,#050609c2 78%)}
+.paint-puddle{position:absolute;z-index:3;width:42%;aspect-ratio:1;left:29%;top:22%;background:radial-gradient(circle at 31% 25%,#ffffffb5,transparent 18%),radial-gradient(circle at 55% 57%,var(--mixed) 0 58%,color-mix(in srgb,var(--mixed) 70%,#111) 76%);animation:paint-breathe 4s ease-in-out infinite}
+.ink-drops{position:absolute;z-index:2;inset:0}
+.ink-drops i{position:absolute;width:62px;height:62px;border-radius:48% 52% 55% 45%;left:calc(17% + var(--drop-index) * 18%);top:calc(16% + var(--drop-index) * 7%);background:radial-gradient(circle at 32% 27%,#fff8,var(--drop) 38%,#09090a);box-shadow:0 12px 28px #0009;transform:rotate(calc(var(--drop-index) * 23deg))}
+.mix-readout{z-index:4;background:#07080bbd;border:1px solid #ffffff24;border-radius:12px;padding:9px 12px;backdrop-filter:blur(10px)}
+@keyframes paint-breathe{50%{transform:rotate(-3deg) scale(1.035)}}
+.sim-controls{margin-top:22px;padding:14px;border:1px solid #ffffff20;border-radius:16px;background:#07080c72}
+.sim-controls input[type=range],.angle-control input,.quote-calculator input[type=range]{appearance:none;height:8px;border-radius:99px;background:linear-gradient(90deg,#df3349 0 50%,#ffffff20 50%);outline:0}
+.sim-controls input[type=range]::-webkit-slider-thumb,.angle-control input::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:5px solid #d92c43;box-shadow:0 0 0 5px #d92c4330;transition:.18s ease}
+.sim-controls input[type=range]:hover::-webkit-slider-thumb,.angle-control input:hover::-webkit-slider-thumb{transform:scale(1.16);box-shadow:0 0 0 8px #d92c4330}
+.skin-swap{animation:skin-swap .48s cubic-bezier(.2,.8,.2,1)}
+@keyframes skin-swap{from{opacity:0;transform:scale(1.035);filter:blur(9px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+.tattoo-overlay.draggable{transition:left .24s ease,top .24s ease,width .24s ease,opacity .2s ease,filter .2s ease}
+.tattoo-overlay.draggable.dragging{transition:none;filter:grayscale(1) contrast(1.6) drop-shadow(0 8px 12px #0005)}
+
+/* Interactive 360-degree comparison stage. */
+.compare-stage{position:relative;min-height:330px;margin:18px 0;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px;perspective:1000px;overflow:hidden;border:1px solid #ffffff22;border-radius:20px;background:radial-gradient(circle at 50% 70%,#bd20352d,transparent 45%),linear-gradient(160deg,#17191f,#07080c)}
+.compare-stage:after{content:'';position:absolute;left:8%;right:8%;bottom:18px;height:34px;border-radius:50%;background:#000;filter:blur(14px);opacity:.7}
+.product-360{position:relative;z-index:3;text-align:center;transform:rotateY(var(--turn)) translateZ(18px);transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.product-360 img{width:82%;height:210px;object-fit:contain;border-radius:18px;filter:drop-shadow(0 22px 18px #000)}
+.product-360 h3{margin:2px 0}.product-360 strong{display:block;color:#ff8d99;font-size:.8rem}.product-360 span{color:#aaa;font-size:.7rem}
+.orbit{position:absolute;border:1px solid #ff718145;border-radius:50%;transform:rotateX(70deg);pointer-events:none}.orbit-one{inset:30% 8% 2%}.orbit-two{inset:40% 20% 12%;border-color:#ffffff24}
+.versus{position:absolute;z-index:5;left:50%;top:45%;transform:translate(-50%,-50%);width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#d92c43;box-shadow:0 0 30px #d92c4380}
+.angle-control{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:12px;color:#aaa;font-size:.74rem}.angle-control b{color:#fff}
+
+/* Studio quote choices. */
+.quote-calculator{position:relative;background:linear-gradient(90deg,#08090dcf,#08090d8a),url('/assets/visual/inkora-studio-quote-v1.png') center/cover!important}
+.quote-calculator:before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,#08090da8,#6e17284f);pointer-events:none}.quote-calculator>*{position:relative;z-index:1}
+.size-choices{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:20px 0}
+.size-choices button{min-width:0;min-height:88px;padding:7px 3px;border:1px solid #ffffff25;border-radius:13px;background:#08090c8a;color:#ddd;font:inherit}.size-choices button.active{border-color:#ff7181;background:#a51d344f;box-shadow:inset 0 0 22px #e32d4633}
+.size-choices i{display:block;width:calc(18px + var(--size) * .65);height:calc(18px + var(--size) * .65);max-width:44px;max-height:44px;margin:0 auto 4px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff8,#df3349 45%,#65101f)}
+.size-choices span,.size-choices small{display:block;font-size:.62rem}.size-choices small{color:#999;direction:ltr}
+.quote-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.quote-options fieldset{display:flex;gap:6px;margin:0;padding:10px;border:1px solid #ffffff24;border-radius:14px;background:#08090c61}.quote-options legend{padding:0 8px;color:#aaa;font-size:.7rem}.quote-options button{flex:1;min-height:38px;border:1px solid #ffffff20;border-radius:9px;background:#ffffff08;color:#ddd;font:inherit;font-size:.7rem}.quote-options button.active{background:#d92c43;border-color:#ff8794;color:#fff}
+
+/* Six equal editorial cards and the inspiration strip. */
+.content-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.editorial-card{min-height:220px;aspect-ratio:1.55/1}.editorial-card h2{white-space:nowrap;font-size:clamp(.92rem,1.25vw,1.2rem)!important}.editorial-card p{white-space:nowrap;max-width:100%;font-size:.74rem;overflow:hidden;text-overflow:ellipsis}
+.stencil-article{background-image:url('/assets/products/stencil-printer-v1.jpg')!important}.skin-article{background-image:url('/assets/body-areas/upper-arm.jpg')!important}.comfort-article{background-image:url('/assets/products/tattoo-machine-v1.jpg')!important}
+.style-discovery{margin-block:48px}.inspiration-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.inspiration-card{position:relative;aspect-ratio:1;overflow:hidden;border:1px solid #ffffff2e;border-radius:17px;background:#08090c80;backdrop-filter:blur(10px);transition:.22s ease}.inspiration-card:hover{transform:translateY(-6px);border-color:#ff7181}.inspiration-card img{width:100%;height:100%;object-fit:cover;filter:brightness(.72)}.inspiration-card:after{content:'';position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#07080de8)}.inspiration-card span{position:absolute;z-index:2;inset:auto 8px 12px;text-align:center;font-weight:800}.consultation-banner{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:14px;padding:22px 28px;text-align:right!important}.consultation-banner span{color:#ff8996;font-size:.72rem}.consultation-banner h2{margin:3px 0}.consultation-banner p{color:#aaa}.consultation-banner .home-action{flex:0 0 auto}
+@media(max-width:950px){.compare-stage{min-height:300px}.content-grid{grid-template-columns:repeat(2,1fr)}.inspiration-row{grid-template-columns:repeat(3,1fr)}.size-choices{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:600px){.mix-surface{min-height:250px}.compare-stage{min-height:260px;gap:6px}.product-360 img{height:155px}.quote-options{grid-template-columns:1fr}.size-choices{grid-template-columns:repeat(3,1fr)}.content-grid{grid-template-columns:1fr}.editorial-card{aspect-ratio:1.6/1}.inspiration-row{grid-template-columns:repeat(2,1fr)}.consultation-banner{flex-direction:column;text-align:center!important}.angle-control{grid-template-columns:auto auto}.angle-control input{grid-column:1/-1}.editorial-card h2,.editorial-card p{white-space:normal}}

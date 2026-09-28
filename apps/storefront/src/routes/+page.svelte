@@ -6,6 +6,7 @@
   import Hero from '$lib/components/home/Hero.svelte';
   import InteractiveShowcase from '$lib/components/home/InteractiveShowcase.svelte';
   import Footer from '$lib/components/home/Footer.svelte';
+  import SupportWidget from '$lib/components/home/SupportWidget.svelte';
   import ProductCard from '$lib/components/commerce/ProductCard.svelte';
   import '$lib/components/commerce/store.css';
   import '$lib/components/home/interactive.css';
@@ -86,4 +87,5 @@
     {#if data.products.length}<section class="home-section" aria-labelledby="real-products"><div class="section-heading"><div><p class="eyebrow">متصل به فروشگاه</p><h2 id="real-products">محصولات واقعی WooCommerce</h2></div><a class="home-action" href="/shop">مشاهده همه کالاها</a></div><div class="product-grid">{#each data.products as product}<ProductCard {product} />{/each}</div></section>{/if}
   </main>
   <Footer />
+  <SupportWidget />
 </div>

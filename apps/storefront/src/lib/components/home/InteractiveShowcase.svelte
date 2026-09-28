@@ -40,21 +40,17 @@
     { ...products[2], id: 'ink-color', category: 'ink', title: 'ست رنگی ۵ عددی', price: 3900000, weight: '۵ × ۳۰ میل', use: 'رئالیسم رنگی', stroke: 'قابل ترکیب', voltage: 'وگان', speed: 'پک رنگ' }
   ];
   const compareCategories = [{ id: 'machine', name: 'دستگاه‌ها' }, { id: 'needle', name: 'سوزن‌ها' }, { id: 'ink', name: 'رنگ‌ها' }];
-  const kits = [
-    { name: 'کیت حرفه‌ای کامل', detail: 'دستگاه، سوزن، رنگ و ملزومات', price: 24900000, image: '/assets/products/starter-kit-v1.jpg' },
-    { name: 'کیت استودیو رنگی', detail: 'پالت رنگ، کاپ و کارتریج منتخب', price: 11800000, image: '/assets/products/tattoo-inks-v1.jpg' },
-    { name: 'کیت شروع مطمئن', detail: 'اقلام ضروری برای تمرین و شروع کار', price: 8900000, image: '/assets/products/accessories-v1.jpg' }
-  ];
   const inspirationStyles = [
-    { name: 'رئالیسم', image: '/assets/body-areas/upper-arm.jpg' },
-    { name: 'فاین‌لاین', image: '/assets/tattoo-designs/rose-line.svg' },
-    { name: 'اورنامنتال', image: '/assets/tattoo-designs/ornamental.svg' },
-    { name: 'ژاپنی', image: '/assets/tattoo-designs/tiger-mark.svg' },
-    { name: 'بلک‌ورک', image: '/assets/body-areas/forearm.jpg' },
-    { name: 'رنگی', image: '/assets/products/tattoo-inks-v1.jpg' }
+    { name: 'رئالیسم', image: '/assets/styles/realism.png' },
+    { name: 'فاین‌لاین', image: '/assets/styles/fine-line.png' },
+    { name: 'اورنامنتال', image: '/assets/styles/ornamental.png' },
+    { name: 'ژاپنی', image: '/assets/styles/japanese.png' },
+    { name: 'بلک‌ورک', image: '/assets/styles/blackwork.png' },
+    { name: 'رنگی', image: '/assets/styles/color.png' }
   ];
 
   let rail: HTMLDivElement;
+  let inspirationRail: HTMLDivElement;
   let stage: HTMLDivElement;
   let chosenColors = $state(['#e12839', '#168fb5']);
   let colorMode = $state<'manual' | 'assistant'>('manual');
@@ -78,10 +74,13 @@
   let rightId = $state('rotary-air');
   let compareOpen = $state(false);
   let compareAngle = $state(12);
-  let selectedKit = $state(0);
+  let compareDrag = $state<{ clientX: number; angle: number } | null>(null);
   let quoteSize = $state(14);
   let quoteDetail = $state(2);
   let quoteColor = $state('رنگی');
+  let quoteImage = $state('');
+  let quoteAnalysis = $state('برای تحلیل اولیه، تصویر طرح را بارگذاری کن.');
+  let quoteAnalyzing = $state(false);
 
   const formatPrice = (value: number) => new Intl.NumberFormat('fa-IR').format(value) + ' تومان';
   const modelsForCategory = () => compareModels.filter((model) => model.category === compareCategory);
@@ -113,6 +112,45 @@
   const dragTattoo = (event: PointerEvent) => { if (!dragStart || !stage) return; const rect = stage.getBoundingClientRect(); tattooX = Math.max(8, Math.min(92, dragStart.x + ((event.clientX - dragStart.clientX) / rect.width) * 100)); tattooY = Math.max(10, Math.min(90, dragStart.y + ((event.clientY - dragStart.clientY) / rect.height) * 100)); };
   const endDrag = () => { dragStart = null; draggingTattoo = false; };
   const changeCategory = () => { const models = modelsForCategory(); leftId = models[0].id; rightId = models[1]?.id ?? models[0].id; };
+  const startCompareDrag = (event: PointerEvent) => { (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId); compareDrag = { clientX: event.clientX, angle: compareAngle }; };
+  const moveCompareDrag = (event: PointerEvent) => { if (!compareDrag) return; compareAngle = Math.round(((compareDrag.angle + (event.clientX - compareDrag.clientX) * .8) % 360 + 360) % 360); };
+  const endCompareDrag = () => { compareDrag = null; };
+  const analyzeQuoteUpload = (event: Event) => {
+    const file = (event.currentTarget as HTMLInputElement).files?.[0];
+    if (!file) return;
+    if (quoteImage) URL.revokeObjectURL(quoteImage);
+    quoteImage = URL.createObjectURL(file);
+    quoteAnalyzing = true;
+    quoteAnalysis = 'در حال بررسی رنگ و تراکم خطوط…';
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(96 / image.width, 96 / image.height, 1);
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) return;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let saturation = 0; let contrast = 0; let previous = 0; let count = 0;
+      for (let index = 0; index < pixels.length; index += 16) {
+        const red = pixels[index] / 255; const green = pixels[index + 1] / 255; const blue = pixels[index + 2] / 255;
+        const max = Math.max(red, green, blue); const min = Math.min(red, green, blue);
+        saturation += max ? (max - min) / max : 0;
+        const light = (red + green + blue) / 3;
+        if (count) contrast += Math.abs(light - previous);
+        previous = light; count++;
+      }
+      const averageSaturation = saturation / Math.max(1, count);
+      const edgeDensity = contrast / Math.max(1, count - 1);
+      quoteColor = averageSaturation > .18 ? 'رنگی' : 'مشکی و خاکستری';
+      quoteDetail = edgeDensity > .18 ? 3 : edgeDensity > .09 ? 2 : 1;
+      quoteAnalysis = `تحلیل اولیه: ${quoteColor} با جزئیات ${quoteDetail === 3 ? 'زیاد' : quoteDetail === 2 ? 'متوسط' : 'ساده'}. اندازهٔ واقعی را از گزینه‌های زیر تأیید کن.`;
+      quoteAnalyzing = false;
+    };
+    image.onerror = () => { quoteAnalyzing = false; quoteAnalysis = 'خواندن این تصویر ممکن نبود؛ یک فایل JPG، PNG یا WebP امتحان کن.'; };
+    image.src = quoteImage;
+  };
   const quoteHours = () => Math.max(1, Math.ceil((quoteSize / 7) * quoteDetail * (quoteColor === 'رنگی' ? 1.25 : 1)));
   const quotePrice = () => Math.round((900000 + quoteSize * 185000 * quoteDetail * (quoteColor === 'رنگی' ? 1.22 : 1)) / 100000) * 100000;
 </script>
@@ -143,14 +181,13 @@
 </section>
 
 <section class="commerce-grid">
-  <article class="glass-panel kits-showcase"><div class="panel-heading"><span>INKORA KITS</span><h2>گالری کیت‌های پیشنهادی</h2><p>برای نوع کار و بودجهٔ متفاوت، یک ترکیب آماده انتخاب کن.</p></div><div class="kit-feature"><img src={kits[selectedKit].image} alt={kits[selectedKit].name} /><div><b>{kits[selectedKit].name}</b><span>{kits[selectedKit].detail}</span><strong>{formatPrice(kits[selectedKit].price)}</strong><a href="/shop">مشاهده جزئیات ←</a></div></div><div class="kit-gallery" aria-label="انتخاب کیت">{#each kits as kit, index}<button class:active={selectedKit === index} onclick={() => selectedKit = index}><img src={kit.image} alt="" /><span>{kit.name}</span></button>{/each}</div></article>
-  <article class="glass-panel compare-panel"><div class="panel-heading"><span>COMPARE 360</span><h2>مقایسه در صحنهٔ ۳۶۰ درجه</h2><p>دسته و مدل‌ها را انتخاب کن و زاویهٔ نمایش را تغییر بده.</p></div><label class="compare-category">دسته محصول<select bind:value={compareCategory} onchange={changeCategory}>{#each compareCategories as category}<option value={category.id}>{category.name}</option>{/each}</select></label><div class="compare-selects"><select bind:value={leftId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select><b>VS</b><select bind:value={rightId}>{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select></div><div class="compare-stage"><i class="orbit orbit-one"></i><i class="orbit orbit-two"></i>{#each [selectedModel(leftId), selectedModel(rightId)] as model, index}<div class="product-360" style={`--turn:${compareAngle + (index ? -8 : 8)}deg`}><img src={model.image} alt={model.title} /><h3>{model.title}</h3><strong>{formatPrice(model.price)}</strong><span>{model.weight} · {model.use}</span></div>{/each}<b class="versus">VS</b></div><label class="angle-control"><span>چرخش صحنه</span><b>{compareAngle}°</b><input type="range" min="-35" max="35" bind:value={compareAngle} /></label><button class="compare-open" onclick={() => compareOpen = true}>باز کردن مشخصات کامل</button></article>
+  <article class="glass-panel compare-panel"><div class="compare-top"><div class="panel-heading"><span>COMPARE 360</span><h2>مقایسهٔ تعاملی محصولات</h2><p>محصول‌ها را انتخاب کن و برای چرخش، صحنه را با موس یا لمس بکش.</p></div><label class="compare-category">دسته محصول<select bind:value={compareCategory} onchange={changeCategory}>{#each compareCategories as category}<option value={category.id}>{category.name}</option>{/each}</select></label><div class="compare-selects"><select bind:value={leftId} aria-label="محصول اول">{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select><b>VS</b><select bind:value={rightId} aria-label="محصول دوم">{#each modelsForCategory() as model}<option value={model.id}>{model.title}</option>{/each}</select></div></div><div class="compare-stage" class:dragging={compareDrag !== null} role="application" aria-label="صحنه مقایسه؛ برای چرخاندن محصول‌ها بکش" onpointerdown={startCompareDrag} onpointermove={moveCompareDrag} onpointerup={endCompareDrag} onpointercancel={endCompareDrag}><i class="orbit orbit-one"></i><i class="orbit orbit-two"></i>{#each [selectedModel(leftId), selectedModel(rightId)] as model, index}<div class="product-360" style={`--turn:${compareAngle + (index ? -8 : 8)}deg`}><img src={model.image} alt={model.title} draggable="false" /><h3>{model.title}</h3><strong>{formatPrice(model.price)}</strong><span>{model.weight} · {model.use}</span></div>{/each}<b class="versus">VS</b><span class="drag-360">↔ بکش برای چرخش · {compareAngle}°</span></div><button class="compare-open" onclick={() => compareOpen = true}>باز کردن مشخصات کامل</button></article>
 </section>
 
-<section class="quote-calculator glass-panel" aria-labelledby="quote-title"><div class="quote-copy"><span>PROJECT QUOTE</span><h2 id="quote-title">برآورد زمان و قیمت پروژه</h2><p>ابعاد، تراکم جزئیات و نوع اجرا را انتخاب کن؛ مبلغ نهایی بعد از بررسی طرح و پوست تعیین می‌شود.</p><div class="size-choices" aria-label="اندازه تقریبی طرح">{#each [{size:5,label:'خیلی کوچک'},{size:10,label:'کوچک'},{size:15,label:'متوسط'},{size:25,label:'بزرگ'},{size:35,label:'پروژه‌ای'}] as choice}<button class:active={quoteSize === choice.size} onclick={() => quoteSize = choice.size}><i style={`--size:${choice.size}px`}></i><span>{choice.label}</span><small>{choice.size} cm</small></button>{/each}</div><div class="quote-options"><fieldset><legend>تراکم جزئیات</legend><button class:active={quoteDetail === 1} onclick={() => quoteDetail = 1}>ساده</button><button class:active={quoteDetail === 2} onclick={() => quoteDetail = 2}>متوسط</button><button class:active={quoteDetail === 3} onclick={() => quoteDetail = 3}>پر جزئیات</button></fieldset><fieldset><legend>نوع اجرا</legend><button class:active={quoteColor === 'مشکی و خاکستری'} onclick={() => quoteColor = 'مشکی و خاکستری'}>مشکی و خاکستری</button><button class:active={quoteColor === 'رنگی'} onclick={() => quoteColor = 'رنگی'}>رنگی</button></fieldset></div></div><div class="quote-result"><small>تخمین پروژه</small><b>{quoteHours()} ساعت کار</b><strong>{formatPrice(quotePrice())}</strong><p>پیشنهاد: {quoteHours() > 5 ? 'تقسیم به دو جلسه برای کیفیت و استراحت پوست' : 'قابل انجام در یک جلسه با زمان استراحت'}</p></div></section>
+<section class="quote-calculator glass-panel" aria-labelledby="quote-title"><div class="quote-copy"><span>PROJECT QUOTE</span><h2 id="quote-title">برآورد زمان و قیمت پروژه</h2><p>تصویر طرح را بفرست تا رنگ و تراکم خطوط روی همین دستگاه تحلیل شود؛ سپس اندازهٔ واقعی را انتخاب کن.</p><div class="quote-upload"><label><input type="file" accept="image/png,image/jpeg,image/webp" onchange={analyzeQuoteUpload} /><span>{quoteAnalyzing ? 'در حال تحلیل…' : 'آپلود و تحلیل طرح'}</span><small>JPG، PNG یا WebP</small></label>{#if quoteImage}<img src={quoteImage} alt="پیش‌نمایش طرح بارگذاری‌شده" />{:else}<div class="quote-upload-placeholder" aria-hidden="true">＋</div>{/if}<p>{quoteAnalysis}</p></div><div class="size-choices" aria-label="اندازه تقریبی طرح">{#each [{size:5,label:'خیلی کوچک'},{size:10,label:'کوچک'},{size:15,label:'متوسط'},{size:25,label:'بزرگ'},{size:35,label:'پروژه‌ای'}] as choice}<button class:active={quoteSize === choice.size} onclick={() => quoteSize = choice.size}><i style={`--size:${choice.size}px`}></i><span>{choice.label}</span><small>{choice.size} cm</small></button>{/each}</div><div class="quote-options"><fieldset><legend>تراکم جزئیات</legend><button class:active={quoteDetail === 1} onclick={() => quoteDetail = 1}>ساده</button><button class:active={quoteDetail === 2} onclick={() => quoteDetail = 2}>متوسط</button><button class:active={quoteDetail === 3} onclick={() => quoteDetail = 3}>پر جزئیات</button></fieldset><fieldset><legend>نوع اجرا</legend><button class:active={quoteColor === 'مشکی و خاکستری'} onclick={() => quoteColor = 'مشکی و خاکستری'}>مشکی و خاکستری</button><button class:active={quoteColor === 'رنگی'} onclick={() => quoteColor = 'رنگی'}>رنگی</button></fieldset></div></div><div class="quote-result"><small>تخمین پروژه</small><b>{quoteHours()} ساعت کار</b><strong>{formatPrice(quotePrice())}</strong><p>پیشنهاد: {quoteHours() > 5 ? 'تقسیم به دو جلسه برای کیفیت و استراحت پوست' : 'قابل انجام در یک جلسه با زمان استراحت'}</p><small>این مبلغ برآورد اولیه است و پس از بررسی پوست و محل اجرا نهایی می‌شود.</small></div></section>
 
 <section class="content-grid"><article class="glass-panel editorial-card care-article"><span>راهنمای نگهداری</span><h2>سه روز اول ترمیم</h2><p>شست‌وشوی ملایم، بالم و محافظت از نور مستقیم.</p><a href="/aftercare">مطالعه راهنما ←</a></article><article class="glass-panel editorial-card color-article"><span>پالت‌های محبوب</span><h2>رنگ‌های ترند استودیو</h2><p>پالت مناسب پروژهٔ بعدی را از ترکیب‌های تازه پیدا کن.</p><a href="/inks">دیدن رنگ‌ها ←</a></article><article class="glass-panel editorial-card machine-article"><span>مجله اینکورا</span><h2>انتخاب دستگاه مناسب</h2><p>وزن، کورس و فرم گریپ را برای انتخاب دقیق بررسی کن.</p><a href="/journal">مشاهده مقاله‌ها ←</a></article><article class="glass-panel editorial-card stencil-article"><span>آموزش استودیو</span><h2>انتقال تمیز استنسیل</h2><p>از آماده‌سازی پوست تا ثبات خطوط اولیهٔ طرح.</p><a href="/journal">ادامه مقاله ←</a></article><article class="glass-panel editorial-card skin-article"><span>دانش رنگ</span><h2>رنگ روی تناژهای پوست</h2><p>کنتراست و انتخاب پیگمنت برای تناژهای متفاوت.</p><a href="/journal">ادامه مقاله ←</a></article><article class="glass-panel editorial-card comfort-article"><span>ارگونومی</span><h2>کاهش خستگی دست</h2><p>گریپ، زاویه و استراحت‌های کوتاه در جلسه‌های طولانی.</p><a href="/journal">ادامه مقاله ←</a></article></section>
 
-<section class="style-discovery" aria-labelledby="style-discovery-title"><div class="section-title-row"><div><span>سبک خودت را پیدا کن</span><h2 id="style-discovery-title">الهام بگیر و مسیر هنری‌ات را انتخاب کن</h2></div></div><div class="inspiration-row">{#each inspirationStyles as style}<a href="/shop" class="inspiration-card"><img src={style.image} alt={`نمونه سبک ${style.name}`} /><span>{style.name}</span></a>{/each}</div><div class="consultation-banner glass-panel"><div><span>مشاورهٔ تخصصی Inkora</span><h2>برای انتخاب ابزار و مسیر اجرا مطمئن نیستی؟</h2><p>سبک، سطح تجربه و بودجه‌ات را بگو تا مسیر مناسب را با هم پیدا کنیم.</p></div><a class="home-action primary" href="/contact">درخواست مشاوره</a></div></section>
+<section class="style-discovery" aria-labelledby="style-discovery-title"><div class="section-title-row"><div><span>سبک خودت را پیدا کن</span><h2 id="style-discovery-title">الهام بگیر و مسیر هنری‌ات را انتخاب کن</h2></div><div class="rail-actions"><button aria-label="سبک قبلی" onclick={() => inspirationRail.scrollBy({ left: 300, behavior: 'smooth' })}>→</button><button aria-label="سبک بعدی" onclick={() => inspirationRail.scrollBy({ left: -300, behavior: 'smooth' })}>←</button></div></div><div class="inspiration-row" bind:this={inspirationRail}>{#each inspirationStyles as style}<a href="/shop" class="inspiration-card"><img src={style.image} alt={`نمونه سبک ${style.name}`} /><span>{style.name}</span></a>{/each}</div><div class="consultation-banner glass-panel"><div><span>مشاورهٔ تخصصی Inkora</span><h2>برای انتخاب ابزار و مسیر اجرا مطمئن نیستی؟</h2><p>سبک، سطح تجربه و بودجه‌ات را بگو تا مسیر مناسب را با هم پیدا کنیم.</p></div><a class="home-action primary" href="/contact">درخواست مشاوره</a></div></section>
 
 {#if compareOpen}<div class="compare-modal-backdrop"><dialog open class="compare-modal" aria-labelledby="compare-modal-title"><button class="modal-close" aria-label="بستن" onclick={() => compareOpen = false}>×</button><span>مقایسهٔ تخصصی {compareCategories.find((item) => item.id === compareCategory)?.name}</span><h2 id="compare-modal-title">{selectedModel(leftId).title} در برابر {selectedModel(rightId).title}</h2><div class="spec-table"><b>مشخصه</b><b>{selectedModel(leftId).title}</b><b>{selectedModel(rightId).title}</b>{#each [['قیمت', formatPrice(selectedModel(leftId).price), formatPrice(selectedModel(rightId).price)], ['وزن/بسته', selectedModel(leftId).weight, selectedModel(rightId).weight], ['کاربرد', selectedModel(leftId).use, selectedModel(rightId).use], ['کورس/نوع', selectedModel(leftId).stroke, selectedModel(rightId).stroke], ['ولتاژ/ساختار', selectedModel(leftId).voltage, selectedModel(rightId).voltage], ['سرعت/ویژگی', selectedModel(leftId).speed, selectedModel(rightId).speed]] as row}<span>{row[0]}</span><span>{row[1]}</span><span>{row[2]}</span>{/each}</div></dialog></div>{/if}

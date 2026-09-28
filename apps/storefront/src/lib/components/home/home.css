@@ -157,11 +157,13 @@
 .home-hero { min-height:470px; }
 .brand-marquee { justify-content:center; min-height:100px; }
 .brand-marquee img { width:auto; height:46px; max-width:150px; object-fit:contain; filter:grayscale(1) brightness(2.4); opacity:.86; flex:0 0 auto; }
+.brand-marquee{flex-wrap:nowrap;justify-content:space-between;padding-inline:10px}.brand-logo{display:grid;place-items:center;flex:0 0 170px;height:72px;overflow:hidden;background:transparent!important}.brand-logo img{width:100%;height:58px;max-width:160px;object-fit:contain;mix-blend-mode:normal;opacity:1;filter:none}
 .footer-grid { grid-template-columns:1.1fr .8fr 1.1fr; align-items:start; gap:56px; }
 .footer-grid nav a { min-height:32px; }
 .footer-brand p { margin-top:16px; color:#e8e3df; }
 .social-row a { width:40px; height:40px; display:grid; place-items:center; border:1px solid #ffffff35; border-radius:50%; color:#fff; background:#ffffff08; transition:.2s ease; }
 .social-row a:hover { color:#ff8391; border-color:#ff7181; transform:translateY(-3px); }
+.social-row a{border-color:#ffffff2b!important;color:#fff!important;box-shadow:inset 0 1px #ffffff35,0 8px 18px #0005}.social-row .instagram{background:radial-gradient(circle at 30% 105%,#ffd36a 0 22%,#ff3b77 44%,#8b3ad8 72%,#3158d5)}.social-row .telegram{background:#229ed9}.social-row .youtube{background:#ff0000}.social-row .whatsapp{background:#25d366}.social-row a:hover{filter:brightness(1.12);transform:translateY(-3px)}
 .social-row svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .newsletter p { color:#aaa; font-size:.82rem; }
 .newsletter form { display:grid; grid-template-columns:1fr 46px; margin-top:15px; direction:rtl; }

@@ -282,3 +282,29 @@
   .hero-actions { flex-direction: column; align-items: center; }
   .simulator-frame { grid-template-columns: 1fr; }
 }
+
+/* Neutral graphite theme: reserve warm colors for product imagery only. */
+.inkora-home .home-action.primary,
+.inkora-home .newsletter button,
+.inkora-home .quote-options button.active,
+.inkora-home .size-choices button.active,
+.inkora-home .compare-open,
+.inkora-home .compare-media > span,
+.inkora-home .versus,
+.inkora-home .support-launch {
+  background: linear-gradient(135deg, #a9bdc8, #5c7482) !important;
+  border-color: #c6d8df !important;
+  color: #10151a !important;
+  box-shadow: 0 12px 28px #0008, 0 0 20px #9eb7c333 !important;
+}
+.inkora-home .home-action.primary:hover,
+.inkora-home .newsletter button:hover,
+.inkora-home .compare-open:hover,
+.inkora-home .support-launch:hover { background: #c5d7de !important; }
+.inkora-home .home-nav > a:hover,
+.inkora-home .home-nav > a[aria-current],
+.inkora-home .social-row a:hover,
+.inkora-home .footer-grid a:hover,
+.inkora-home .consultation-banner span { color: #d6e7ee !important; }
+.inkora-home .home-nav > a:hover,
+.inkora-home .home-nav > a[aria-current] { border-bottom-color: #a9bdc8 !important; }

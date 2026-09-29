@@ -170,3 +170,25 @@
 .pigments button{min-width:0}
 .pigments button>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* Replace the old red interaction accents with the graphite theme. */
+.inkora-home .tool-tabs button.active,
+.inkora-home .color-search button,
+.inkora-home .suggestion-form button,
+.inkora-home .pigments button.active,
+.inkora-home .tab-button.active,
+.inkora-home .compare-selects b,
+.inkora-home .versus,
+.inkora-home .compare-open,
+.inkora-home .quote-options button.active,
+.inkora-home .size-choices button.active {
+  background: linear-gradient(135deg,#a9bdc8,#5c7482) !important;
+  border-color: #c6d8df !important;
+  color: #10151a !important;
+  box-shadow: 0 10px 24px #0008,0 0 18px #9eb7c333 !important;
+}
+.inkora-home .compare-stage {
+  background: radial-gradient(ellipse at 50% 100%,#7892a133 0,transparent 46%),linear-gradient(180deg,#171a21,#080a0f 70%);
+}
+.inkora-home .product-360:before { background: radial-gradient(circle,#a9bdc833,transparent 67%); }
+.inkora-home .pigments button.active { color:#10151a; }
+

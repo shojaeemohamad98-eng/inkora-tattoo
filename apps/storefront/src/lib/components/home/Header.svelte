@@ -1,12 +1,13 @@
 <script lang="ts">
   import Icon, { type IconName } from './Icon.svelte';
-  import { navigation } from './data';
   let open = $state(false);
   let scrolled = $state(false);
   let opener: HTMLButtonElement;
   const actions: { name: IconName; label: string; href: string }[] = [
     { name: 'user', label: 'حساب کاربری', href: '/account' }, { name: 'bag', label: 'سبد خرید', href: '/cart' }
   ];
+  const productLinks = [{ href: '/machines', label: 'دستگاه‌ها' }, { href: '/needles', label: 'سوزن‌ها' }, { href: '/inks', label: 'رنگ‌ها' }];
+  const mainLinks = [{ href: '/journal', label: 'مجله' }, { href: '/community', label: 'جامعهٔ هنرمندان' }, { href: '/about', label: 'دربارهٔ اینکورا' }, { href: '/contact', label: 'تماس با ما' }];
   function close() { open = false; opener?.focus(); }
 </script>
 <svelte:window onscroll={() => scrolled = window.scrollY > 28} onkeydown={(event) => { if (event.key === 'Escape' && open) close(); }} />
@@ -19,7 +20,8 @@
     <form class="header-search" action="/shop" method="GET"><label class="visually-hidden" for="home-search">جست‌وجوی تجهیزات</label><div><input id="home-search" name="q" placeholder="جست‌وجوی تجهیزات…" /><Icon name="search" /></div></form>
     <nav id="home-navigation" class="home-nav" class:open aria-label="منوی اصلی">
       <a href="/" aria-current="page" onclick={() => open = false}>صفحه اصلی</a><a href="/shop" onclick={() => open = false}>فروشگاه</a>
-      {#each navigation as link}<a href={link.href} onclick={() => open = false}>{link.label}</a>{/each}
+      <div class="nav-dropdown"><a href="/shop">محصولات <span>⌄</span></a><div class="nav-submenu">{#each productLinks as link}<a href={link.href} onclick={() => open = false}>{link.label}</a>{/each}</div></div>
+      {#each mainLinks as link}<a href={link.href} onclick={() => open = false}>{link.label}</a>{/each}
       <div class="mobile-actions">{#each actions as action}<a class="home-action" href={action.href}>{action.label}</a>{/each}</div>
     </nav>
     <div class="header-actions">

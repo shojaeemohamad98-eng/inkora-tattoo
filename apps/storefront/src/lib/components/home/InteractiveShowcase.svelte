@@ -11,7 +11,9 @@
   ];
   const pigments = [
     { name: 'قرمز', hex: '#e12839' }, { name: 'زرد', hex: '#f0ad21' }, { name: 'آبی', hex: '#168fb5' },
-    { name: 'سفید', hex: '#ece9df' }, { name: 'مشکی', hex: '#111217' }, { name: 'بنفش', hex: '#713b78' }
+    { name: 'سفید', hex: '#ece9df' }, { name: 'مشکی', hex: '#111217' }, { name: 'بنفش', hex: '#713b78' },
+    { name: 'سبز', hex: '#3a9b59' }, { name: 'نارنجی', hex: '#ef6f27' }, { name: 'صورتی', hex: '#e7649f' },
+    { name: 'فیروزه‌ای', hex: '#20b7aa' }, { name: 'قهوه‌ای', hex: '#74452f' }, { name: 'اُخرایی', hex: '#bb7b24' }
   ];
   const colorRecipes = [
     { words: ['زرشکی', 'شرابی'], name: 'زرشکی عمیق', target: '#771b32', colors: ['#e12839', '#713b78', '#111217'] },
@@ -32,8 +34,8 @@
     'ساق پا': { image: '/assets/body-areas/calf.jpg', x: 50, y: 48, size: 40 }
   };
   const compareModels: CompareModel[] = [
-    { ...products[0], id: 'pen-pro', category: 'machine', title: 'Pen Pro X', stroke: '۴.۰ میلی‌متر', voltage: '۶–۹ ولت', speed: '۱۱۰۰۰ دور' },
-    { ...products[0], id: 'rotary-air', category: 'machine', title: 'Rotary Air', price: 10800000, weight: '۱۷۲ گرم', use: 'شید و رنگ', stroke: '۳.۵ میلی‌متر', voltage: '۵–۸ ولت', speed: '۹۵۰۰ دور' },
+    { ...products[0], image: '/assets/products/pen-pro-transparent.png', id: 'pen-pro', category: 'machine', title: 'Pen Pro X', stroke: '۴.۰ میلی‌متر', voltage: '۶–۹ ولت', speed: '۱۱۰۰۰ دور' },
+    { ...products[0], image: '/assets/products/rotary-air-transparent.png', id: 'rotary-air', category: 'machine', title: 'Rotary Air', price: 10800000, weight: '۱۷۲ گرم', use: 'شید و رنگ', stroke: '۳.۵ میلی‌متر', voltage: '۵–۸ ولت', speed: '۹۵۰۰ دور' },
     { ...products[1], id: 'rl3', category: 'needle', title: 'کارتریج 3RL', stroke: 'لاین ظریف', voltage: '۰.۳۰ میلی‌متر', speed: 'بسته ۲۰ عددی' },
     { ...products[1], id: 'm1-9', category: 'needle', title: 'کارتریج 9M1', price: 980000, weight: 'بسته ۲۰ عددی', use: 'سایه و پک رنگ', stroke: 'مگنوم خمیده', voltage: '۰.۳۵ میلی‌متر', speed: 'ممبران نرم' },
     { ...products[2], id: 'ink-black', category: 'ink', title: 'مشکی عمیق ۳۰ml', stroke: 'پیگمنت بالا', voltage: 'وگان', speed: 'لاین و بلک‌ورک' },
@@ -167,7 +169,7 @@
     <div class="panel-heading"><span>INK MIX STUDIO</span><h2>آزمایشگاه واقعی ترکیب رنگ</h2><p>روی زمینهٔ روشن رنگ‌ها را دستی ترکیب کن یا نام رنگ دلخواه را به پیشنهادگر بده.</p></div>
     <div class="tool-tabs" role="tablist" aria-label="روش انتخاب رنگ"><button class:active={colorMode === 'manual'} onclick={() => colorMode = 'manual'}>ترکیب دستی</button><button class:active={colorMode === 'assistant'} onclick={() => colorMode = 'assistant'}>پیشنهاد هوشمند</button></div>
     {#if colorMode === 'assistant'}<div class="color-search"><input bind:value={colorQuery} placeholder="مثلاً زرشکی عمیق یا سبز زیتونی" aria-label="رنگ دلخواه" /><button onclick={suggestColor}>پیدا کردن فرمول</button></div>{/if}
-    <div class="mix-workspace"><div class="mix-surface" style={`--mixed:${displayedColor()}`}><img src="/assets/products/tattoo-inks-v1.jpg" alt="میز تصویری ترکیب رنگ تتو" /><div class="ink-drops" aria-hidden="true">{#each chosenColors as color, index}<i style={`--drop:${color};--drop-index:${index}`}></i>{/each}</div><div class="paint-puddle"></div><div class="mix-readout"><b>{recipeName}</b><small>{displayedColor()} · {chosenColors.length} پیگمنت</small></div></div><div class="pigments">{#each pigments as pigment}<button class:active={chosenColors.includes(pigment.hex)} style={`--pigment:${pigment.hex}`} onclick={() => togglePigment(pigment.hex)} aria-pressed={chosenColors.includes(pigment.hex)}><i></i><span>{pigment.name}</span></button>{/each}</div></div>
+    <div class="mix-workspace"><div class="mix-surface" style={`--mixed:${displayedColor()}`}><img src="/assets/products/tattoo-inks-v1.jpg" alt="میز آزمایشگاهی ترکیب رنگ تتو" /><div class="lab-shelf" aria-hidden="true"><i></i><i></i><i></i></div><div class="mix-vessel"><div class="ink-drops" aria-hidden="true">{#each chosenColors as color, index}<i style={`--drop:${color};--drop-index:${index}`}></i>{/each}</div><div class="paint-puddle"></div><i class="mix-stick" aria-hidden="true"></i></div><div class="mix-readout"><b>{recipeName}</b><small>{displayedColor()} · {chosenColors.length} پیگمنت داخل ظرف</small><button onclick={() => { chosenColors = []; targetColor = ''; recipeName = 'ظرف خالی'; }}>خالی کردن ظرف</button></div></div><div class="pigment-panel"><div class="pigment-panel-title"><b>قفسه پیگمنت‌ها</b><span>برای افزودن یا حذف، روی بطری بزن</span></div><div class="pigments">{#each pigments as pigment}<button class:active={chosenColors.includes(pigment.hex)} style={`--pigment:${pigment.hex}`} onclick={() => togglePigment(pigment.hex)} aria-pressed={chosenColors.includes(pigment.hex)}><i><u></u></i><span>{pigment.name}</span><small>{chosenColors.includes(pigment.hex) ? 'داخل ترکیب' : 'افزودن'}</small></button>{/each}</div></div></div>
   </article>
 
   <article class="glass-panel simulator-lab">

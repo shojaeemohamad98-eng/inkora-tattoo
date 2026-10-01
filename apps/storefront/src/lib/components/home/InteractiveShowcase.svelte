@@ -69,6 +69,7 @@
   let tattooPrompt = $state('گل و پلنگ رئالیسم');
   let selectedTattoo = $state(0);
   let suggestionsReady = $state(false);
+  let generatedPrompt = $state('');
   let dragStart: { clientX: number; clientY: number; x: number; y: number } | null = null;
   let draggingTattoo = $state(false);
   let compareCategory = $state('machine');
@@ -109,7 +110,7 @@
     uploadedDesign = URL.createObjectURL(file); simulatorMode = 'upload';
   };
   const changeBodyArea = () => { const area = bodyAreas[bodyArea]; tattooX = area.x; tattooY = area.y; tattooSize = area.size; };
-  const generateTattooSuggestions = () => { suggestionsReady = true; changeBodyArea(); };
+  const generateTattooSuggestions = () => { generatedPrompt = tattooPrompt.trim() || 'طرح آزاد شما'; suggestionsReady = true; selectedTattoo = 0; changeBodyArea(); };
   const startDrag = (event: PointerEvent) => { if (!currentTattoo()) return; (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId); draggingTattoo = true; dragStart = { clientX: event.clientX, clientY: event.clientY, x: tattooX, y: tattooY }; };
   const dragTattoo = (event: PointerEvent) => { if (!dragStart || !stage) return; const rect = stage.getBoundingClientRect(); tattooX = Math.max(8, Math.min(92, dragStart.x + ((event.clientX - dragStart.clientX) / rect.width) * 100)); tattooY = Math.max(10, Math.min(90, dragStart.y + ((event.clientY - dragStart.clientY) / rect.height) * 100)); };
   const endDrag = () => { dragStart = null; draggingTattoo = false; };
@@ -176,7 +177,7 @@
     <div class="panel-heading"><span>SKIN PREVIEW</span><h2>شبیه‌سازی و جای‌گذاری طرح</h2><p>طرح خودت را بارگذاری کن یا بر اساس محل، اندازه و ایده چند پیشنهاد بساز.</p></div>
     <div class="tool-tabs" role="tablist" aria-label="روش انتخاب طرح"><button class:active={simulatorMode === 'upload'} onclick={() => simulatorMode = 'upload'}>۱. آپلود طرح</button><button class:active={simulatorMode === 'suggested'} onclick={() => simulatorMode = 'suggested'}>۲. طرح پیشنهادی</button></div>
     <div class="body-area-row"><label>عضو بدن<select bind:value={bodyArea} onchange={changeBodyArea} aria-label="عضو بدن">{#each Object.keys(bodyAreas) as area}<option>{area}</option>{/each}</select></label><span>با تغییر عضو، عکس و جای اولیهٔ طرح عوض می‌شود.</span></div>
-    {#if simulatorMode === 'suggested'}<div class="suggestion-form"><input bind:value={tattooPrompt} aria-label="ایده طرح" placeholder="ایده؛ مثلاً گل رئالیسم" /><button onclick={generateTattooSuggestions}>ساخت ۳ پیشنهاد</button></div>{#if suggestionsReady}<div class="tattoo-suggestions">{#each tattooSuggestions as suggestion, index}<button class:active={selectedTattoo === index} onclick={() => selectedTattoo = index}><img src={suggestion.image} alt="" /><span>{suggestion.name}</span></button>{/each}</div>{/if}{/if}
+    {#if simulatorMode === 'suggested'}<div class="suggestion-form"><input bind:value={tattooPrompt} aria-label="پرامپت آزاد طرح" placeholder="هر ایده‌ای بنویس؛ مثلاً اژدهای ژاپنی با گل صدتومانی" /><button onclick={generateTattooSuggestions}>ساخت پیش‌نمایش</button></div>{#if suggestionsReady}<p class="prompt-result">پیش‌نمایش بر اساس پرامپت آزاد شما: <b>{generatedPrompt}</b></p><div class="tattoo-suggestions">{#each tattooSuggestions as suggestion, index}<button class:active={selectedTattoo === index} onclick={() => selectedTattoo = index}><img src={suggestion.image} alt="" /><span>{suggestion.name}</span></button>{/each}</div>{/if}{/if}
     <div class="skin-preview" bind:this={stage}>{#key bodyArea}<img class="arm-image skin-swap" src={bodyAreas[bodyArea].image} alt={`پیش‌نمایش ${bodyArea}`} />{/key}{#if currentTattoo()}<img class="tattoo-overlay draggable" class:dragging={draggingTattoo} src={currentTattoo()} alt="طرح قابل جابه‌جایی روی پوست" style={`left:${tattooX}%;top:${tattooY}%;width:${tattooSize}%;opacity:${tattooOpacity / 100}`} onpointerdown={startDrag} onpointermove={dragTattoo} onpointerup={endDrag} onpointercancel={endDrag} />{:else}<div class="upload-hint">طرح شما<br /><small>اینجا نمایش داده می‌شود</small></div>{/if}{#if currentTattoo()}<span class="drag-tip">با ماوس یا لمس جابه‌جا کن</span>{/if}</div>
     <div class="sim-controls"><label class="upload-button">آپلود طرح<input type="file" accept="image/png,image/jpeg,image/webp" onchange={onUpload} /></label><label>اندازه <input type="range" min="18" max="72" bind:value={tattooSize} /></label><label>شفافیت <input type="range" min="25" max="100" bind:value={tattooOpacity} /></label></div><small class="privacy-note">آپلود و جابه‌جایی در همین مرورگر انجام می‌شود. پیشنهادها فعلاً نمونهٔ تعاملی‌اند.</small>
   </article>

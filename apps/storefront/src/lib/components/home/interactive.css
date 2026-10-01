@@ -3,7 +3,7 @@
 @media(max-width:600px){.catalog-section,.interactive-grid,.commerce-grid,.style-finder,.content-grid,.idea-grid{margin-block:30px}.section-title-row{align-items:start}.interactive-grid>article,.commerce-grid>article,.idea-grid>article{padding:18px}.mix-workspace{grid-template-columns:1fr}.mixed-color{min-height:150px}.sim-controls{grid-template-columns:1fr}.kit-feature{grid-template-columns:1fr}.kit-feature img{height:210px}.style-tabs{grid-template-columns:repeat(2,1fr)}.style-result{grid-template-columns:1fr}.style-result img{height:190px}.content-grid{grid-template-columns:1fr}.care-story{grid-template-columns:1fr}.care-story img{height:210px}.planner-result{grid-template-columns:1fr}.product-rail{grid-auto-columns:78%}}
 
 /* Let the full-page tattoo scene remain visible through every interactive surface. */
-.inkora-home .glass-panel { background: linear-gradient(145deg, #ffffff0c, #ffffff02 46%), #07090d52; border-color: #ffffff31; backdrop-filter: blur(13px) saturate(115%); }
+.inkora-home .glass-panel { background: linear-gradient(145deg, #ffffff0a, #ffffff01 46%), #07090d32; border-color: #ffffff26; backdrop-filter: blur(13px) saturate(115%); }
 .inkora-home .glass-product { background: #07090d4d; border-color: #ffffff30; backdrop-filter: blur(10px); }
 .inkora-home .glass-product::after { background: linear-gradient(transparent, #08090dbd 52%); }
 .inkora-home .compare-cards > div,
@@ -191,4 +191,5 @@
 }
 .inkora-home .product-360:before { background: radial-gradient(circle,#a9bdc833,transparent 67%); }
 .inkora-home .pigments button.active { color:#10151a; }
+.inkora-home .prompt-result{margin:0 0 10px;padding:9px 12px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08;color:#b9c7cd;font-size:.72rem}.inkora-home .prompt-result b{color:#e3edf0;font-weight:700}
 

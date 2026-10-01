@@ -193,3 +193,21 @@
 .inkora-home .pigments button.active { color:#10151a; }
 .inkora-home .prompt-result{margin:0 0 10px;padding:9px 12px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08;color:#b9c7cd;font-size:.72rem}.inkora-home .prompt-result b{color:#e3edf0;font-weight:700}
 
+/* Editorial black comparison board and clearer skin preview controls. */
+.inkora-home .compare-stage{min-height:310px;background:#050608!important;border:1px solid #ffffff20;border-radius:16px;box-shadow:inset 0 1px #ffffff12!important;overflow:hidden}
+.inkora-home .compare-stage:before,.inkora-home .compare-stage:after,.inkora-home .compare-stage .orbit{display:none}
+.inkora-home .compare-stage .product-360{z-index:1;transform:perspective(900px) rotateY(var(--turn)) translateZ(18px)}
+.inkora-home .compare-stage .product-360 img{height:190px;filter:drop-shadow(0 20px 18px #000d)}
+.inkora-home .compare-stage .drag-360{background:#15181c;color:#aebec5}
+.inkora-home .quote-calculator{border-color:#ffffff24!important;background:linear-gradient(90deg,#080a0dcc,#080a0d88),url('/assets/visual/inkora-studio-quote-v1.png') center/cover!important}
+.inkora-home .quote-calculator:before{background:linear-gradient(115deg,#080a0dcc,#25323b55)!important}
+.inkora-home .quote-copy>span,.inkora-home .quote-result small,.inkora-home .quote-result strong{color:#d6e7ee!important}
+.inkora-home .quote-upload label{border-color:#a9bdc888;background:#9eb7c318;color:#e4edf0}
+.inkora-home .quote-upload-placeholder{color:#d6e7ee}
+.inkora-home .skin-preview{cursor:grab;box-shadow:inset 0 0 0 1px #ffffff22,0 12px 28px #0007}
+.inkora-home .skin-preview:active{cursor:grabbing}
+.inkora-home .skin-preview:after{content:'برای جابه‌جایی، کلیک را نگه دار و بکش';position:absolute;inset:auto 12px 12px auto;padding:6px 10px;border-radius:999px;background:#080a0dcc;color:#d8e5e9;font-size:.64rem;pointer-events:none}
+.inkora-home .pigments{grid-template-columns:repeat(3,minmax(0,1fr));max-height:430px}
+.inkora-home .pigments button{min-height:76px}
+.inkora-home .compare-stage .product-360 strong{color:#d6e7ee}
+

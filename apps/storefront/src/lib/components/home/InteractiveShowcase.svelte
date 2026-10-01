@@ -13,7 +13,9 @@
     { name: 'قرمز', hex: '#e12839' }, { name: 'زرد', hex: '#f0ad21' }, { name: 'آبی', hex: '#168fb5' },
     { name: 'سفید', hex: '#ece9df' }, { name: 'مشکی', hex: '#111217' }, { name: 'بنفش', hex: '#713b78' },
     { name: 'سبز', hex: '#3a9b59' }, { name: 'نارنجی', hex: '#ef6f27' }, { name: 'صورتی', hex: '#e7649f' },
-    { name: 'فیروزه‌ای', hex: '#20b7aa' }, { name: 'قهوه‌ای', hex: '#74452f' }, { name: 'اُخرایی', hex: '#bb7b24' }
+    { name: 'فیروزه‌ای', hex: '#20b7aa' }, { name: 'قهوه‌ای', hex: '#74452f' }, { name: 'اُخرایی', hex: '#bb7b24' },
+    { name: 'خاکستری', hex: '#7b8790' }, { name: 'نقره‌ای', hex: '#b8c5c9' }, { name: 'آبی نفتی', hex: '#14556a' },
+    { name: 'سبز یشمی', hex: '#237a68' }, { name: 'مرجانی', hex: '#d97868' }, { name: 'طلایی', hex: '#c7a34b' }
   ];
   const colorRecipes = [
     { words: ['زرشکی', 'شرابی'], name: 'زرشکی عمیق', target: '#771b32', colors: ['#e12839', '#713b78', '#111217'] },
@@ -31,7 +33,11 @@
     'مچ و ساعد داخلی': { image: '/assets/body-areas/wrist.jpg', x: 50, y: 43, size: 27 },
     'ساعد بیرونی': { image: '/assets/body-areas/forearm.jpg', x: 52, y: 50, size: 38 },
     'بازو و شانه': { image: '/assets/body-areas/upper-arm.jpg', x: 50, y: 45, size: 44 },
-    'ساق پا': { image: '/assets/body-areas/calf.jpg', x: 50, y: 48, size: 40 }
+    'ساق پا': { image: '/assets/body-areas/calf.jpg', x: 50, y: 48, size: 40 },
+    'ران': { image: '/assets/body-areas/upper-arm.jpg', x: 50, y: 46, size: 46 },
+    'کتف و پشت': { image: '/assets/body-areas/forearm.jpg', x: 52, y: 48, size: 44 },
+    'مچ پا': { image: '/assets/body-areas/calf.jpg', x: 50, y: 58, size: 24 },
+    'سینه': { image: '/assets/body-areas/upper-arm.jpg', x: 50, y: 44, size: 48 }
   };
   const compareModels: CompareModel[] = [
     { ...products[0], image: '/assets/products/pen-pro-transparent.png', id: 'pen-pro', category: 'machine', title: 'Pen Pro X', stroke: '۴.۰ میلی‌متر', voltage: '۶–۹ ولت', speed: '۱۱۰۰۰ دور' },
